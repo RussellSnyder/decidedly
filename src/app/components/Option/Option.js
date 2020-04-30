@@ -1,41 +1,25 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import './UserWeights.module.css';
+import './OptionCollection.module.css';
 import ImportanceSlider from '../ImportanceSlider/ImportanceSlider'
 import { IMPORTANCE_SLIDER_MAX, IMPORTANCE_SLIDER_MIN } from '../ImportanceSlider/ImportanceSliderSlice';
 
 import {
-  addUserWeight,
-  updateUserWeightValue,
-  updateUserWeightName,
-  selectUserWeights,
-} from './UserWeightsSlice';
+  selectOption,
+} from './OptionSlice';
 
 import { CustomInput, Button, Form, FormGroup, Label, Input } from 'reactstrap';
 
-function UserWeights() {
-  const dispatch = useDispatch();
-  const userWeights = useSelector(selectUserWeights);
+function Option() {
+  // const dispatch = useDispatch();
+  // const options = useSelector(selectOptions);
+  // const option = useSelector(selectOption);
 
-  const [initialValue, setInitialValue] = useState(0);
-  const [weightName, setWeightName] = useState('');
-  const [errors, setErrors] = useState([]);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!weightName || weightName.length < 1) {
-      setErrors([...errors, "please enter a name"])      
-    } else {      
-      dispatch(addUserWeight({name: weightName, value: initialValue}))
-      setWeightName("")
-      setInitialValue(0)
-      setErrors([])
-    }
-  }
   return (
-    <div className="user-weights">
-      <h2>User Weights</h2>
-      <div className="mb-5">
+    <div className="option">
+      <h2>Option</h2>
+      
+      {/* <div className="mb-5">
         {errors.map(error => <p className="text-danger">
           {error}
         </p>)}
@@ -81,10 +65,10 @@ function UserWeights() {
         </Form>
       </div>
       <div className="weights">
-        {userWeights && userWeights.map(weight => <ImportanceSlider key={weight.id} { ...weight } />)}
-      </div>
+        {optionWeights && optionWeights.map(weight => <ImportanceSlider key={weight.id} { ...weight } />)}
+      </div> */}
     </div>
   );
 }
 
-export default UserWeights;
+export default Option;

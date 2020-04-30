@@ -13,7 +13,7 @@ function ImportanceSlider({id, name, value}) {
   return (
     <div className="weighting-slider row mb-4">
         {!isEditing &&
-          <div className="col-sm-3">
+          <div className="col-sm-4">
             {name}
             <Button
               block
@@ -26,7 +26,7 @@ function ImportanceSlider({id, name, value}) {
           </div>
         }
         {isEditing &&
-          <div className="col-sm-3">
+          <div className="col-sm-4">
             <Input
               onBlur={() => {
                 setIsEditing(false)
@@ -75,7 +75,7 @@ function ImportanceSlider({id, name, value}) {
             </div>
           </div>
         </div>
-        <div className="col-sm-2">
+        <div className="col-sm-1 text-right">
           <Button
             size="small"
             color="danger"
