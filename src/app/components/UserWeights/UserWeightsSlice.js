@@ -18,6 +18,7 @@ export const userWeightsSlice = createSlice({
     },
     deleteUserWeight(state, action) {
       const { id } = action.payload
+
       return state.filter(weight => weight.id !== id);
     },
     updateUserWeightValue(state, action) {

@@ -1,31 +1,71 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import './OptionCollection.module.css';
-import ImportanceSlider from '../ImportanceSlider/ImportanceSlider'
-import { IMPORTANCE_SLIDER_MAX, IMPORTANCE_SLIDER_MIN } from '../ImportanceSlider/ImportanceSliderSlice';
+import ImportanceSlider, { IMPORTANCE_SLIDER_MAX, IMPORTANCE_SLIDER_MIN } from '../ImportanceSlider/ImportanceSlider'
 
 import {
-  deleteOption,
-  createOption,
-  saveOption,
-  focusOnOption,
-  selectOptions,
-  selectOption,
-} from './OptionCollectionSlice';
+  CustomInput,
+  Button,
+  Form,
+  FormGroup,
+  Label,
+  Input
+} from 'reactstrap';
 
-import { CustomInput, Button, Form, FormGroup, Label, Input } from 'reactstrap';
+import Option, { OPTION_VIEWS } from '../Option/Option';
+
+import {
+  selectUserWeights
+} from '../UserWeights/UserWeightsSlice'
+
+import {
+  loadOptionWeights,
+  resetOptionWeights,
+  updateOptionWeightValue,
+  updateOptionName,
+  initializeOption,
+  selectOption,
+} from '../Option/OptionSlice';
+
+import {
+  selectOptionCollection,
+  selectOptionInOptionCollection,
+} from '../OptionCollection/OptionCollectionSlice';
+
+
+const VIEWS = {
+  OVERVIEW: "OVERVIEW",
+  OPTION: "OPTION",
+  ADD_OPTION: "ADD_OPTION",
+}
 
 function OptionCollection() {
   const dispatch = useDispatch();
-  const options = useSelector(selectOptions);
-  const option = useSelector(selectOption);
+  const optionCollection = useSelector(selectOptionCollection);
+  const option = useSelector(selectOptionInOptionCollection);
+  const userWeights = useSelector(selectUserWeights);
 
-  const handleSubmit = (e) => {
+  const [view, setView] = useState(VIEWS.OVERVIEW)
+
+  // const saveOption = () => {
+  //   dispatch()
+  // }
+
+  const handleAddOption = () => {
+    dispatch(initializeOption(userWeights))
+    setView(VIEWS.ADD_OPTION)
   }
+
   return (
-    <div className="user-weights">
-      <h2>Options</h2>
-      
+    <div className="option-collection">
+      <h2>Option Collection</h2>
+      {optionCollection.map(option => <Button>{option.name}</Button>)}
+
+      <Button onClick={() => handleAddOption()}>Add Option</Button>
+
+      <div className="view">        
+        <Option />
+      </div>
       {/* <div className="mb-5">
         {errors.map(error => <p className="text-danger">
           {error}

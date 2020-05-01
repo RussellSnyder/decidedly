@@ -48,6 +48,7 @@ export const optionSlice = createSlice({
         weight.value = value
       }
     },
+
     updateOptionName(state, action) {
       const { name } = action.payload
       return {
@@ -71,9 +72,9 @@ export const {
   resetOptionWeights,
   updateOptionWeightValue,
   updateOptionName,
-  initializeOption } = optionSlice.actions;
+  initializeOption
+} = optionSlice.actions;
 
 export const selectOption = state => state.option;
-export const selectOptionWeights = state => state.option.weights;
 
 export default optionSlice.reducer;

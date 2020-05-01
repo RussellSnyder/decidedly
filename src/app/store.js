@@ -1,14 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
-import importanceSliderReducer from './components/ImportanceSlider/ImportanceSliderSlice';
+import optionReducer from './components/Option/OptionSlice';
 import userWeightsReducer from './components/UserWeights/UserWeightsSlice';
 import optionCollectionReducer from './components/OptionCollection/OptionCollectionSlice';
 import decisionCollectionReducer from './components/DecisionCollection/DecisionCollectionSlice';
 
 export default configureStore({
   reducer: {
-    counter: counterReducer,
-    importanceSlider: importanceSliderReducer,
+    option: optionReducer,
     userWeights: userWeightsReducer,
     optionCollection: optionCollectionReducer,
     decisionCollection: decisionCollectionReducer

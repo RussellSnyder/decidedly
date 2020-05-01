@@ -10,13 +10,25 @@ export const decisionCollectionSlice = createSlice({
   },
   reducers: {
     updateDecisionCollectionName(state, action) {
-      state.name = action.payload.name
+      const { name } = action.payload
+      return {
+        ...state,
+        name
+      }
     },
     updateDecisionCollectionUserWeights(state, action) {
-      state.userWeights = action.payload.userWeights
+      const { userWeights } = action.payload
+      return {
+        ...state,
+        userWeights
+      }
     },
     updateDecisionCollectionOptionCollection(state, action) {
-      state.optionCollection = action.payload.optionCollection
+      const { optionCollection } = action.payload
+      return {
+        ...state,
+        optionCollection
+      }
     },
   },
 });

@@ -8,6 +8,7 @@ import OptionCollection from '../OptionCollection/OptionCollection'
 import {
   updateDecisionCollectionName,
   updateDecisionCollectionUserWeights,
+  updateDecisionCollectionOptionCollection,
   selectDecisionCollectionName,
 } from './DecisionCollectionSlice';
 
@@ -19,14 +20,14 @@ import { CustomInput, Button, Form, FormGroup, Label, Input } from 'reactstrap';
 
 const VIEWS = {
   USER_WEIGHTS: "USER_WEIGHTS",
-  OPTION_WEIGHTS: "OPTION_WEIGHTS",
+  OPTION_COLLECTION: "OPTION_COLLECTION",
 }
 
 function DecisionCollection() {
   const dispatch = useDispatch();
   const name = useSelector(selectDecisionCollectionName);
   const userWeights = useSelector(selectUserWeights);
-  const [view, setView] = useState(VIEWS.USER_WEIGHTS);
+  const [view, setView] = useState(VIEWS.OPTION_COLLECTION);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -46,7 +47,7 @@ function DecisionCollection() {
 
       </h2>
       <Input
-        onChange={(e) => dispatch(updateDecisionCollectionName(e.target.value))}
+        onChange={(e) => dispatch(updateDecisionCollectionName({name: e.target.value}))}
         value={name}
         type="text"
         name="name"
@@ -60,13 +61,17 @@ function DecisionCollection() {
           </Button>
         </div>
         <div className="col-6">
-          <Button outline={view !== VIEWS.OPTION_WEIGHTS} block onClick={() => setView(VIEWS.OPTION_WEIGHTS)}>
-            Option Weights
+          <Button outline={view !== VIEWS.OPTION_COLLECTION} block onClick={() => setView(VIEWS.OPTION_COLLECTION)}>
+            Options
           </Button>
         </div>
       </div>
-      {view === VIEWS.USER_WEIGHTS && <UserWeights />}
-      {view === VIEWS.OPTION_WEIGHTS && <OptionCollection />}
+      {view === VIEWS.USER_WEIGHTS && <UserWeights        
+        handleSave={(payload) => dispatch(updateDecisionCollectionUserWeights(payload))}
+      />}
+      {view === VIEWS.OPTION_COLLECTION && <OptionCollection
+        handleSave={(payload) => dispatch(updateDecisionCollectionOptionCollection(payload))}      
+      />}
     </div>
   );
 }

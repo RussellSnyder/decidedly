@@ -41,7 +41,7 @@ export const optionCollectionSlice = createSlice({
 
 export const { addOption, updateOption, deleteOption } = optionCollectionSlice.actions;
 
-export const selectOptions = state => state.optionCollection;
-export const selectOption = (state, id) => state.optionCollection.find(option => option.id === id);
+export const selectOptionCollection = state => state.optionCollection;
+export const selectOptionInOptionCollection = (state, id) => state.optionCollection.find(option => option.id === id);
 
 export default optionCollectionSlice.reducer;

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import './UserWeights.module.css';
-import ImportanceSlider from '../ImportanceSlider/ImportanceSlider'
-import { IMPORTANCE_SLIDER_MAX, IMPORTANCE_SLIDER_MIN } from '../ImportanceSlider/ImportanceSliderSlice';
+import ImportanceSlider, { IMPORTANCE_SLIDER_MAX, IMPORTANCE_SLIDER_MIN } from '../ImportanceSlider/ImportanceSlider'
 
 import {
   addUserWeight,
+  deleteUserWeight,
   updateUserWeightValue,
   updateUserWeightName,
   selectUserWeights,
@@ -13,7 +13,7 @@ import {
 
 import { CustomInput, Button, Form, FormGroup, Label, Input } from 'reactstrap';
 
-function UserWeights() {
+function UserWeights({ handleSave }) {
   const dispatch = useDispatch();
   const userWeights = useSelector(selectUserWeights);
 
@@ -34,7 +34,16 @@ function UserWeights() {
   }
   return (
     <div className="user-weights">
-      <h2>User Weights</h2>
+      <h2>
+        User Weights
+        <Button
+          color="success"
+          className="float-right"
+          onClick={() => handleSave({userWeights})}
+        >
+          Save User Weights
+        </Button>
+      </h2>
       <div className="mb-5">
         {errors.map(error => <p className="text-danger">
           {error}
@@ -81,7 +90,14 @@ function UserWeights() {
         </Form>
       </div>
       <div className="weights">
-        {userWeights && userWeights.map(weight => <ImportanceSlider key={weight.id} { ...weight } />)}
+        {userWeights && userWeights.map(weight => {
+        return <ImportanceSlider
+          key={weight.id}
+          { ...weight }
+          handleNameChange={(payload) => dispatch(updateUserWeightName(payload))}
+          handleValueChange={(payload) => dispatch(updateUserWeightValue(payload))}
+          handleDelete={(payload) => dispatch(deleteUserWeight(payload))}
+        />})}
       </div>
     </div>
   );

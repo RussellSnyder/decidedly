@@ -3,11 +3,11 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import './ImportanceSlider.module.css';
 import { CustomInput, Button, Input } from 'reactstrap';
-import { IMPORTANCE_SLIDER_MAX, IMPORTANCE_SLIDER_MIN } from './ImportanceSliderSlice';
-import { deleteUserWeight, updateUserWeightName, updateUserWeightValue } from '../UserWeights/UserWeightsSlice';
 
-function ImportanceSlider({id, name, value}) {
-  const dispatch = useDispatch();
+export const IMPORTANCE_SLIDER_MAX = 7;
+export const IMPORTANCE_SLIDER_MIN = -7;
+
+function ImportanceSlider({id, name, value, handleNameChange, handleValueChange, handleDelete}) {
   const [isEditing, setIsEditing] = useState(false);
 
   return (
@@ -31,12 +31,7 @@ function ImportanceSlider({id, name, value}) {
               onBlur={() => {
                 setIsEditing(false)
               }}
-              onChange={(e) => {
-                dispatch(updateUserWeightName({
-                  id,
-                  name: e.target.value
-                }))
-              }}
+              onChange={(e) => handleNameChange({id, name: e.target.value})}
               value={name}
               type="text"
               name="name"
@@ -51,14 +46,14 @@ function ImportanceSlider({id, name, value}) {
             value={value}
             min={IMPORTANCE_SLIDER_MIN}
             max={IMPORTANCE_SLIDER_MAX}
-            onChange={(e)=> dispatch(updateUserWeightValue({id, value: parseInt(e.target.value)}))}
+            onChange={(e)=> handleValueChange({id, value: parseInt(e.target.value)})}
           />
           <div className="row">
             <div className="col-4 text-left">
               <Button onClick={()=> {
-                if (value <= IMPORTANCE_SLIDER_MIN) return
-                dispatch(updateUserWeightValue({id, value: --value}))}
-              }>
+                if (value <= IMPORTANCE_SLIDER_MIN) return;
+                handleValueChange({id, value: --value})
+              }}>
                 -
               </Button>
             </div>
@@ -68,8 +63,8 @@ function ImportanceSlider({id, name, value}) {
             <div className="col-4 text-right">
               <Button onClick={()=> {
                 if (value >= IMPORTANCE_SLIDER_MAX) return
-                dispatch(updateUserWeightValue({id, value: ++value}))}
-              }>
+                handleValueChange({id, value: ++value})
+              }}>
                 +
               </Button>
             </div>
@@ -79,7 +74,7 @@ function ImportanceSlider({id, name, value}) {
           <Button
             size="small"
             color="danger"
-            outline onClick={() => dispatch(deleteUserWeight(id))}
+            outline onClick={() => handleDelete({id})}
           >
             X
           </Button>
