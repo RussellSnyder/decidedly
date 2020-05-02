@@ -1,24 +1,14 @@
 import userWeights, {
   addUserWeight,
   deleteUserWeight,
+  updateUserWeights,
   updateUserWeightValue,
   updateUserWeightName,
-  selectUserWeights
 } from './UserWeightsSlice';
 
-const createTestUserWeights = () => {
-  let fakeIndex = 0;
-  const returnArray = [];
-  for (let i = -7; i <= 7; i++ ) {
-    returnArray.push({
-      id: fakeIndex,
-      name: `fake name ${fakeIndex}`,
-      value: i
-    })
-    fakeIndex++
-  }
-  return returnArray
-}
+import { 
+  createFakeUserWeights,
+} from "../../../test/helpers/";
 
 describe('userWeights reducer', () => {
   it('should handle initial state', () => {
@@ -110,16 +100,37 @@ describe('userWeights reducer', () => {
     })
   })
 
+  describe('updateUserWeights', () => {
+    it('should update all userWeights', () => {
+      const initialWeights = createFakeUserWeights();
+      const updatedWeights = createFakeUserWeights();
+
+      expect(initialWeights).not.toEqual(updatedWeights)
+
+      const initialState = userWeights(initialWeights, {})
+
+      expect(initialState).toEqual(initialWeights)
+
+      const testState = userWeights(initialWeights, {
+        type: updateUserWeights.type,
+        payload: {
+          userWeights: updatedWeights,  
+        }
+      })
+
+      expect(testState).not.toEqual(initialState)
+      expect(testState).toEqual(updatedWeights)
+
+    })
+  })
   describe('deleteUserWeight', () => {
     it('should delete a userWeight', () => {
-      const intialTestData = userWeights(
-        createTestUserWeights(),
-        {}
-      )
-      expect(intialTestData.length).toEqual(15)
+      const initialWeights = createFakeUserWeights();
+      const intialTestData = userWeights(initialWeights, {})
+      expect(intialTestData.length).toEqual(initialWeights.length)
 
       const deletedTestData = userWeights(
-        createTestUserWeights(),
+        createFakeUserWeights(),
         {
           type: deleteUserWeight.type,
           payload: {
@@ -127,11 +138,11 @@ describe('userWeights reducer', () => {
           }
         }
       )
-      expect(deletedTestData.length).toEqual(14);
+      expect(deletedTestData.length).toEqual(initialWeights.length - 1);
       expect(deletedTestData.findIndex(weight => weight.id === 0)).toEqual(-1);
 
       const deletedTestData2 = userWeights(
-        createTestUserWeights(),
+        deletedTestData,
         {
           type: deleteUserWeight.type,
           payload: {
@@ -139,7 +150,7 @@ describe('userWeights reducer', () => {
           }
         }
       )
-      expect(deletedTestData2.length).toEqual(14);
+      expect(deletedTestData2.length).toEqual(deletedTestData.length - 1);
       expect(deletedTestData2.findIndex(weight => weight.id === 5)).toEqual(-1);
 
     })
@@ -147,40 +158,41 @@ describe('userWeights reducer', () => {
 
   describe('updateUserWeightValue', () => {
     it('should update a userWeightValue', () => {
+      const initialUserWieghts = createFakeUserWeights();
       const intialTestData = userWeights(
-        createTestUserWeights(),
+        initialUserWieghts,
         {}
       )
-      expect(intialTestData.length).toEqual(15)
+      expect(intialTestData.length).toEqual(initialUserWieghts.length)
 
       const weightToUpdate = intialTestData.find(weight => weight.id === 4)
-      expect(weightToUpdate.value).not.toEqual(15)
+      const initialWeightValue = weightToUpdate.value
+      const expectedWeightValue = initialWeightValue + 1;
 
       const updatedTestData = userWeights(
-        createTestUserWeights(),
+        initialUserWieghts,
         {
           type: updateUserWeightValue.type,
           payload: {
             id: 4,
-            value: 10 
+            value: expectedWeightValue
           }
         }
       )
-      expect(updatedTestData.length).toEqual(15);
 
       const updatedWeight = updatedTestData.find(weight => weight.id === 4)
-      expect(updatedWeight.value).toEqual(10);
+      expect(updatedWeight.value).toEqual(expectedWeightValue);
     })
 
     it('should not update a userWeightValue if the id is not found', () => {
-      const intialTestData = userWeights(
-        createTestUserWeights(),
-        {}
-      )
-      expect(intialTestData.length).toEqual(15)
+      const initialUserWieghts = createFakeUserWeights();
+
+      const intialTestData = userWeights(initialUserWieghts, {})
+
+      expect(intialTestData.length).toEqual(initialUserWieghts.length)
 
       const updatedTestData = userWeights(
-        createTestUserWeights(),
+        initialUserWieghts,
         {
           type: updateUserWeightValue.type,
           payload: {
@@ -189,26 +201,25 @@ describe('userWeights reducer', () => {
           }
         }
       )
-      expect(updatedTestData.length).toEqual(15);
 
-      expect(JSON.stringify(updatedTestData)).toEqual(JSON.stringify(intialTestData));
+      expect(updatedTestData).toEqual(intialTestData);
     })
   })
 
   describe('updateUserWeightName', () => {
     it('should update a userWeightName', () => {
-      const intialTestData = userWeights(
-        createTestUserWeights(),
-        {}
-      )
-      expect(intialTestData.length).toEqual(15)
+      const initialUserWieghts = createFakeUserWeights();
+
+      const intialTestData = userWeights(initialUserWieghts, {})
+
+      expect(intialTestData.length).toEqual(initialUserWieghts.length)
 
       const weightToUpdate = intialTestData.find(weight => weight.id === 4)
       const expectedName = "Yolo Bro!"
       expect(weightToUpdate.name).not.toEqual(expectedName)
 
       const updatedTestData = userWeights(
-        createTestUserWeights(),
+        initialUserWieghts,
         {
           type: updateUserWeightName.type,
           payload: {
@@ -217,21 +228,16 @@ describe('userWeights reducer', () => {
           }
         }
       )
-      expect(updatedTestData.length).toEqual(15);
 
       const updatedWeight = updatedTestData.find(weight => weight.id === 4)
       expect(updatedWeight.name).toEqual(expectedName);
     })
 
     it('should not update a userWeightName if the id is not found', () => {
-      const intialTestData = userWeights(
-        createTestUserWeights(),
-        {}
-      )
-      expect(intialTestData.length).toEqual(15)
+      const initialUserWieghts = createFakeUserWeights();
 
       const updatedTestData = userWeights(
-        createTestUserWeights(),
+        initialUserWieghts,
         {
           type: updateUserWeightValue.type,
           payload: {
@@ -240,9 +246,8 @@ describe('userWeights reducer', () => {
           }
         }
       )
-      expect(updatedTestData.length).toEqual(15);
 
-      expect(JSON.stringify(updatedTestData)).toEqual(JSON.stringify(intialTestData));
+      expect(updatedTestData).toEqual(initialUserWieghts);
       expect(updatedTestData.findIndex(weight => weight.name === "whatever")).toEqual(-1);
     })
   })  

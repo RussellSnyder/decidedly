@@ -14,3 +14,11 @@ export const createFakeUserWeights = () => {
 
   return weights
 }
+
+export const createFakeUserWeight = () => {
+  return {
+    id: 42,
+    name: 'Fake Weight',
+    value: createFakeWeightValue()
+  }
+}

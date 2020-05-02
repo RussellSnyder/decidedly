@@ -2,73 +2,90 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import './UserWeights.module.css';
 import ImportanceSlider, { IMPORTANCE_SLIDER_MAX, IMPORTANCE_SLIDER_MIN } from '../ImportanceSlider/ImportanceSlider'
-
+import { getIndexFromId } from '../../utils/'
 import {
-  addUserWeight,
-  deleteUserWeight,
-  updateUserWeightValue,
-  updateUserWeightName,
-  selectUserWeights,
-} from './UserWeightsSlice';
+  createDecisionCollection,
+  updateDecisionCollectionUserWeight,
+  deleteDecisionCollectionUserWeight,
+  updateDecisionCollectionOption,
+  deleteDecisionCollectionOption,
+  updateDecisionCollectionName,
+  deleteDecisionCollection,
+  createDecisionCollectionOption,
+  selectDecisionCollections,
+} from '../DecisionCollections/DecisionCollectionsSlice'
 
 import { CustomInput, Button, Form, FormGroup, Label, Input } from 'reactstrap';
 
-function UserWeights({ handleSave }) {
+function UserWeights(props) {
   const dispatch = useDispatch();
-  const userWeights = useSelector(selectUserWeights);
+  const { history } = props;
+  const { collectionId } = props.match.params 
+  const decisionCollections = useSelector(selectDecisionCollections);
+  const decisionCollection = decisionCollections[getIndexFromId(decisionCollections, collectionId)]
+  const { userWeights, id } = decisionCollection
 
-  const [initialValue, setInitialValue] = useState(0);
-  const [weightName, setWeightName] = useState('');
+  const [newWeightValue, setNewWeightValue] = useState(0);
+  const [newWeightName, setNewWeightName] = useState('');
   const [errors, setErrors] = useState([]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!weightName || weightName.length < 1) {
-      setErrors([...errors, "please enter a name"])      
-    } else {      
-      dispatch(addUserWeight({name: weightName, value: initialValue}))
-      setWeightName("")
-      setInitialValue(0)
+  const handleNewWeightSubmit = () => {
+    if (!newWeightName || newWeightName.length < 1) {
+      setErrors([...errors, "please enter a name"])
+    } else {
+      dispatch(updateDecisionCollectionUserWeight({
+        id,
+        userWeight: {
+          name: newWeightName,
+          value: newWeightValue
+        }
+      }))
+      history.push(`/collections/${collectionId}/weights/`)    
+
+      setNewWeightName("")
+      setNewWeightValue(0)
       setErrors([])
     }
   }
   return (
     <div className="user-weights">
-      <h2>
-        User Weights
-        <Button
-          color="success"
-          className="float-right"
-          onClick={() => handleSave({userWeights})}
-        >
-          Save User Weights
-        </Button>
-      </h2>
+      <div className="row mb-4">
+        <div className="col-12">
+          <h2>
+            User Weights
+          </h2>
+        </div>
+      </div> 
+
       <div className="mb-5">
         {errors.map(error => <p className="text-danger">
           {error}
         </p>)}
-        <Form className="row"
-          onSubmit={(e) => handleSubmit(e)}>
+        <Form
+          className="row"
+          onSubmit={(e) => {
+          e.preventDefault();
+          handleNewWeightSubmit()
+        }}>
           <FormGroup className="col-sm-4">
             <Label for="name">Weight Name</Label>
             <Input
-              onChange={(e) => setWeightName(e.target.value)}
-              value={weightName}
-              type="text"
-              name="name"
-              id="name"
-              placeholder="name of weight" />
+              type="textarea"
+              rows="2"
+              onChange={(e) => setNewWeightName(e.target.value)}
+              value={newWeightName}
+              placeholder="name of weight"
+            />
           </FormGroup>
           <FormGroup className="col-sm-7">
             <Label for="initialValue">Value</Label>
             <CustomInput
               type="range"
               // value={value}
-              value={initialValue}
+              value={newWeightValue}
               min={IMPORTANCE_SLIDER_MIN}
               max={IMPORTANCE_SLIDER_MAX}
-              onChange={(e) => setInitialValue(e.target.value)}
+              onChange={(e) => setNewWeightValue(parseInt(e.target.value))}
               name="initialValue"
               id="initialValue"
             />
@@ -77,26 +94,46 @@ function UserWeights({ handleSave }) {
               {IMPORTANCE_SLIDER_MIN}
             </div>
             <div className="col-4 text-center">
-              {initialValue}
+              {newWeightValue}
             </div>
             <div className="col-4 text-right">
               {IMPORTANCE_SLIDER_MAX}
             </div>
           </div>
           </FormGroup>
-          <Button color="info" type="submit">
-            Add Weight +
+          <Button
+            className="col-sm-1"
+            color="success"
+            type="submit"
+          >
+            +
           </Button>
         </Form>
       </div>
       <div className="weights">
-        {userWeights && userWeights.map(weight => {
+        {userWeights && userWeights.map(userWeight => {
         return <ImportanceSlider
-          key={weight.id}
-          { ...weight }
-          handleNameChange={(payload) => dispatch(updateUserWeightName(payload))}
-          handleValueChange={(payload) => dispatch(updateUserWeightValue(payload))}
-          handleDelete={(payload) => dispatch(deleteUserWeight(payload))}
+          key={`userweight-${userWeight.id}`}
+          { ...userWeight }
+          handleNameChange={(name) => 
+            updateDecisionCollectionUserWeight({
+              id,
+              userWeightId: userWeight.id,
+              name
+            })
+          }
+          handleValueChange={(value) => 
+            updateDecisionCollectionUserWeight({
+              id,
+              userWeightId: userWeight.id,
+              value
+            })
+          }
+          handleDelete={() => deleteDecisionCollectionUserWeight({
+            id,
+            userWeight
+          })
+}
         />})}
       </div>
     </div>

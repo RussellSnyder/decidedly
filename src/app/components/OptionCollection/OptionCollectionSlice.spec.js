@@ -1,13 +1,13 @@
 import optionCollection, {
   addOption,
   updateOption,
-  deleteOption,
-  selectOptions,
-  selectOption,
+  deleteOption
 } from './OptionCollectionSlice';
 
-import { createFakeOption } from "../../../test/createFakeOption";
-import { createFakeOptionCollection } from "../../../test/createFakeOptionCollection";
+import {
+  createFakeOptionCollection, 
+  createFakeOption
+} from "../../../test/helpers/";
 
 describe('optionCollection reducer', () => {
   it('should handle initial state', () => {

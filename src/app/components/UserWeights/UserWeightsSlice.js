@@ -21,6 +21,10 @@ export const userWeightsSlice = createSlice({
 
       return state.filter(weight => weight.id !== id);
     },
+    updateUserWeights(state, action) {
+      const { userWeights } = action.payload
+      return userWeights
+    },
     updateUserWeightValue(state, action) {
       const { id, value } = action.payload
       const weight = state.find(weight => weight.id === id)
@@ -39,7 +43,7 @@ export const userWeightsSlice = createSlice({
   },
 });
 
-export const { deleteUserWeight, addUserWeight, updateUserWeightValue, updateUserWeightName } = userWeightsSlice.actions;
+export const { deleteUserWeight, addUserWeight, updateUserWeights, updateUserWeightValue, updateUserWeightName } = userWeightsSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of

@@ -1,58 +1,76 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import './ImportanceSlider.module.css';
-import { CustomInput, Button, Input } from 'reactstrap';
+import { CustomInput,
+  Button,
+  Input
+} from 'reactstrap';
 
 export const IMPORTANCE_SLIDER_MAX = 7;
 export const IMPORTANCE_SLIDER_MIN = -7;
 
-function ImportanceSlider({id, name, value, handleNameChange, handleValueChange, handleDelete}) {
+function ImportanceSlider({
+  id,
+  name,
+  value,
+  handleNameChange,
+  handleValueChange,
+  handleDelete,
+}) {
   const [isEditing, setIsEditing] = useState(false);
 
+  const DisplayName = () => {
+    if (!handleNameChange) return name;
+    
+    const notEditing = (
+      <div className="editable" onClick={() => setIsEditing(!isEditing)}>
+        {name}
+      </div>
+    )
+
+    const editing = (
+      <div className="editable">
+        <Input
+          type="textarea"
+          rows="2"
+          onKeyDown={(e) => {
+            if (e.keyCode === 13) {
+              setIsEditing(false)
+              handleNameChange(e.target.value)  
+            }
+          }}
+          onBlur={(e) => {
+            setIsEditing(false)
+            handleNameChange(e.target.value)
+          }}
+          defaultValue={name}
+        />
+      </div>
+    )
+
+    return isEditing ? editing : notEditing
+  }
+
   return (
-    <div className="weighting-slider row mb-4">
-        {!isEditing &&
-          <div className="col-sm-4">
-            {name}
-            <Button
-              block
-              size="small"
-              color="warning"
-              outline onClick={() => setIsEditing(!isEditing)}
-            >
-              Edit Name
-            </Button>
-          </div>
-        }
-        {isEditing &&
-          <div className="col-sm-4">
-            <Input
-              onBlur={() => {
-                setIsEditing(false)
-              }}
-              onChange={(e) => handleNameChange({id, name: e.target.value})}
-              value={name}
-              type="text"
-              name="name"
-              id="name"
-            />
-          </div>
-        }
-        <div className="col-sm-7">
+    <div className="importantance-slider row mb-4">
+        <div className="col-sm-4">
+          <DisplayName /> 
+        </div>
+        <div className={`col-sm-${handleDelete ? 7 : 8}`}>
           <CustomInput
             id={id}
             type="range"
             value={value}
             min={IMPORTANCE_SLIDER_MIN}
             max={IMPORTANCE_SLIDER_MAX}
-            onChange={(e)=> handleValueChange({id, value: parseInt(e.target.value)})}
+            onChange={(e) => handleValueChange(parseInt(e.target.value))}
           />
           <div className="row">
             <div className="col-4 text-left">
               <Button onClick={()=> {
                 if (value <= IMPORTANCE_SLIDER_MIN) return;
-                handleValueChange({id, value: --value})
+                handleValueChange(value - 1)
               }}>
                 -
               </Button>
@@ -63,14 +81,14 @@ function ImportanceSlider({id, name, value, handleNameChange, handleValueChange,
             <div className="col-4 text-right">
               <Button onClick={()=> {
                 if (value >= IMPORTANCE_SLIDER_MAX) return
-                handleValueChange({id, value: ++value})
+                handleValueChange(value + 1)
               }}>
                 +
               </Button>
             </div>
           </div>
         </div>
-        <div className="col-sm-1 text-right">
+        {handleDelete && <div className="col-sm-1 text-right">
           <Button
             size="small"
             color="danger"
@@ -78,7 +96,7 @@ function ImportanceSlider({id, name, value, handleNameChange, handleValueChange,
           >
             X
           </Button>
-        </div>
+        </div>}
     </div>
   );
 }

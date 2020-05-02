@@ -5,25 +5,12 @@ import option, {
   resetOptionWeights,
 } from './OptionSlice';
 
-const createFakeWeights = () => {
-  const weights = [];
-  let fakeIndex = 0;
-  for (let i = 0; i <= 10; i++ ) {
-    weights.push({
-      id: fakeIndex,
-      name: `Weight name ${i}`,
-      value: -7 + Math.round(Math.random() * 14)
-    })
-    fakeIndex++
-  }
-
-  return weights
-}
+import { createFakeUserWeights } from "../../../test/helpers/";
 
 const fakeInitializedState = {
   id: "2",
   name: "the big one",
-  weights: createFakeWeights()
+  weights: createFakeUserWeights()
 }
 
 describe('option reducer', () => {
@@ -37,15 +24,15 @@ describe('option reducer', () => {
 
   describe("initializeOption", () => {
     it('should generate incrementing option IDs', () => {
-      const action1 = initializeOption({userWeights: createFakeWeights()})
-      const action2 = initializeOption({userWeights: createFakeWeights()})
+      const action1 = initializeOption({userWeights: createFakeUserWeights()})
+      const action2 = initializeOption({userWeights: createFakeUserWeights()})
       
       expect(action1.payload.id).toEqual(0)
       expect(action2.payload.id).toEqual(1)
     })
 
     it('the weight[i].name should be the same as userWeights[i].name', () => {
-      const userWeights = createFakeWeights();
+      const userWeights = createFakeUserWeights();
 
       const action1 = initializeOption({userWeights})
       
