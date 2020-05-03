@@ -1,216 +1,427 @@
 import decisionCollections, {
+    decisionCollectionsInitialState,
+    selectDecisionCollection,
+    selectUserWeights,
+    selectOptionCollection,
+    selectUserWeight,
+    selectOption,
+    selectOptionWeights,
+    selectOptionWeight,
     createDecisionCollection,
-    updateDecisionCollectionUserWeight,
-    updateDecisionCollectionOption,
-    updateDecisionCollectionName,
     deleteDecisionCollection,
-    decisionCollectionInitialState,
-    resetNextDCId,
-    getHighestId,
+    addDecisionCollectionUserWeight,
+    updateDecisionCollectionUserWeight,
+    deleteDecisionCollectionUserWeight,
+    createDecisionCollectionOption,
+    updateDecisionCollectionOption,
+    deleteDecisionCollectionOption,
+    updateDecisionCollectionOptionWeight
   } from './DecisionCollectionsSlice';
 
 import { 
   createFakeDecisionCollections,
   createFakeDecisionCollection,
   createFakeUserWeight,
-  createFakeOption
+  createFakeOption,
+  createFakeWeightValue
 } from "../../../test/helpers";
 
-describe.only('decisionCollections reducer', () => {
-  it('should handle initial state', () => {
-    expect(decisionCollections(undefined, {})).toEqual([])
+const initialStateSize = Object.keys(decisionCollectionsInitialState).length
+
+
+describe('decisionCollectionsSlice', () => {
+  let testDecisionCollectionId
+  let testOptionId
+  let testUserWeightId
+  let testOptionWeightId
+
+  beforeEach(() => {
+    testDecisionCollectionId = Math.random < 0.5 ? 1 : 2;
+    testOptionId = Math.random < 0.5 ? 1 : 2;
+    testUserWeightId = Math.random < 0.5 ? 1 : 2;
+    testOptionWeightId = Math.random < 0.5 ? 1 : 2;
   })
 
-  describe("createDecisionCollection", () => {
-    it('should generate incrementing DecisionCollection IDs', () => {
-      const testState = decisionCollections([], {
-        type: createDecisionCollection.type
-      })
-
-      expect(testState.length).toBe(1)
-      expect(testState[0].id).toBe(0)
-
-      const testState2 = decisionCollections(testState, {
-        type: createDecisionCollection.type
-      })
-
-      expect(testState2.length).toBe(2)
-      expect(testState2[1].id).toBe(1)
-
+  describe('selects', () => {
+    let state;
+    beforeEach(() => {
+      state = decisionCollectionsInitialState;
     })
-
-    it('should create a decision collection | empty state', () => {
-      resetNextDCId();
-
-      const testState = decisionCollections([], {
-        type: createDecisionCollection.type
-      })
-
-      expect(testState.length).toBe(1)
-      expect(testState[0]).toEqual({
-        ...decisionCollectionInitialState,
-        id: 0
-      })
+    afterEach(() => {
+      expect(state).toEqual(decisionCollectionsInitialState, "immutible")
     })
-    it('should create a decision collection | non-empty state', () => {
-      resetNextDCId();
-
-      const initialState = createFakeDecisionCollections()
-
-      const testState = decisionCollections(initialState, {
-        type: createDecisionCollection.type
+    describe('selectdecisionCollection', () => {
+      it('returns a decisionCollection with the passed id', () => {
+        const testValue = selectDecisionCollection(state, testDecisionCollectionId)
+        const expectedValue = state[testDecisionCollectionId]
+        expect(testValue).toBe(expectedValue)
       })
-
-      expect(testState.length).toBe(initialState.length + 1)
-    })
+    }) 
+    describe('selectUserWeights', () => {
+      it('returns UserWeights with the passed id', () => {
+        const testValue = selectUserWeights(state, testDecisionCollectionId)
+        const expectedValue = state[testDecisionCollectionId].userWeights
+        expect(testValue).toBe(expectedValue)
+      })
+    }) 
+    describe('selectOptionCollection', () => {
+      it('returns an OptionCollection with the passed id', () => {
+        const testValue = selectOptionCollection(state, testDecisionCollectionId)
+        const expectedValue = state[testDecisionCollectionId].optionCollection
+        expect(testValue).toBe(expectedValue)
+      })
+    }) 
+    describe('selectUserWeight', () => {
+      it('returns an UserWeight with the passed id', () => {
+        const testValue = selectUserWeight(state, testDecisionCollectionId, testUserWeightId)
+        const expectedValue = state[testDecisionCollectionId].userWeights[testUserWeightId]
+        expect(testValue).toBe(expectedValue)
+      })
+    }) 
+    describe('selectOption', () => {
+      it('returns an Option with the passed id', () => {
+        const testValue = selectOption(state, testDecisionCollectionId, testOptionId)
+        const expectedValue = state[testDecisionCollectionId].optionCollection[testOptionId]
+        expect(testValue).toBe(expectedValue)
+      })
+    }) 
+    describe('selectOptionWeights', () => {
+      it('returns an OptionWeights with the passed id', () => {
+        const testValue = selectOptionWeights(state, testDecisionCollectionId, testOptionId)
+        const expectedValue = state[testDecisionCollectionId].optionCollection[testOptionId].weights
+        expect(testValue).toBe(expectedValue)
+      })
+    }) 
+    describe('selectOptionWeight', () => {
+      it('returns an OptionWeight with the passed id', () => {
+        const testValue = selectOptionWeight(state, testDecisionCollectionId, testOptionId, testOptionWeightId)
+        const expectedValue = state[testDecisionCollectionId].optionCollection[testOptionId].weights[testOptionWeightId]
+        expect(testValue).toBe(expectedValue)
+      })
+    }) 
   })
-  describe('updateDecisionCollectionUserWeight', () => {
-    it('should update a decision collection\'s userWieights array if id given', () => {
-      const initialState = createFakeDecisionCollections()
 
-      // get ID of first collection
-      const testCollectionId = initialState[0].id
-
-      const testUserWeight = initialState[0].userWeights[0]
-
-      const expectedUserWeight = {
-        ...createFakeUserWeight(),
-        id: testUserWeight.id
-      };
-
-      const testState = decisionCollections(initialState, {
-        type: updateDecisionCollectionUserWeight.type,
-        payload: {
-          userWeight: expectedUserWeight,
-          id: testCollectionId
-        }
-      })
-
-      expect(testState[0].userWeights[0]).toEqual(expectedUserWeight)
+  describe('reducer', () => {
+    it('handles initial state', () => {
+      expect(decisionCollections(undefined, {})).toEqual(decisionCollectionsInitialState)
     })
-    it('should add a userWieight if id is not found with an id higher than all the others', () => {
-      const initialState = createFakeDecisionCollections()
-
-      const highestInitialWeightId = getHighestId(initialState[0].userWeights)
-
-      // get ID of first collection
-      const testCollectionId = initialState[0].id
-
-      const expectedUserWeight = {
-        ...createFakeUserWeight()
-      };
-
-      const testState = decisionCollections(initialState, {
-        type: updateDecisionCollectionUserWeight.type,
-        payload: {
-          userWeight: expectedUserWeight,
-          id: testCollectionId
-        }
+    describe('Decision Collection CRUD', () => {
+      let testState;
+      beforeEach(() => {
+        testState = decisionCollections(undefined, {
+          type: createDecisionCollection.type
+        })
       })
+      describe("createDecisionCollection", () => {
+        it('creates a decision collection | empty state', () => {  
+          expect(Object.keys(testState)).toHaveLength(initialStateSize + 1)
+          expect(testState[3]).toBeDefined()
+        })
 
-      const testUserWeights = testState[0].userWeights
-      const testUserWeight = testUserWeights[testUserWeights.length - 1]
+        it('generates incrementing DecisionCollection IDs', () => {  
+          const testState2 = decisionCollections(testState, {
+            type: createDecisionCollection.type
+          })
+    
+          expect(Object.keys(testState2)).toHaveLength(Object.keys(testState).length + 1)
+          expect(Object.keys(testState2)).toHaveLength(initialStateSize + 2)
+          expect(testState2[4]).toBeDefined()  
+        })
+    
+        it('creates a decision collection | non-empty state', () => {
+          const initialState = createFakeDecisionCollections()
+          const initialStateLength = Object.keys(initialState).length
 
-      expect(testUserWeight.name).toEqual(expectedUserWeight.name)
-      expect(testUserWeight.value).toEqual(expectedUserWeight.value)
-      expect(testUserWeight.id).toEqual(highestInitialWeightId + 1)
+          const testState = decisionCollections(initialState, {
+            type: createDecisionCollection.type
+          })
+    
+          expect(Object.keys(testState)).toHaveLength(initialStateLength + 1)
+        })
+      })
+      describe('deleteDecisionCollection', () => {
+        it('deletes a decision collection\'s by id', () => {
+          const initialLength = Object.keys(testState).length
 
+          const testState2 = decisionCollections(testState, {
+            type: deleteDecisionCollection.type,
+            payload: {
+              id: testDecisionCollectionId
+            }
+          })
+    
+          const testLength = Object.keys(testState2).length
+          expect(testLength).toEqual(initialLength - 1)
+          expect(testState2[testDecisionCollectionId]).not.toBeDefined()    
+        })
+      })
     })
-  })
-  describe('updateDecisionCollectionOption', () => {
-    it('should update a decision collection\'s option if id is given', () => {
-      const initialState = createFakeDecisionCollections()
+    describe('User Weight CRUD', () => {
+      let expectedUserWeight;
+      let initialUserWeights;
+      let initialState;
 
-      // get ID of first collection
-      const testCollectionId = initialState[0].id
-
-      const initialOption = initialState[0].optionCollection[0]
-
-      const expectedOption = {
-        ...createFakeOption(),
-        id: initialOption.id
-      };
-
-      const testState = decisionCollections(initialState, {
-        type: updateDecisionCollectionOption.type,
-        payload: {
-          option: expectedOption,
-          id: testCollectionId
-        }
+      beforeEach(() => {
+        expectedUserWeight = createFakeUserWeight()
+        initialState = createFakeDecisionCollections()
+        initialUserWeights = selectUserWeights(initialState, testDecisionCollectionId)
       })
 
-      const testOption = testState[0].optionCollection[0]
+      describe('addDecisionCollectionUserWeight', () => {
+        it('adds a user weight to a given collection id', () => {
+          const testState = decisionCollections(initialState, {
+            type: addDecisionCollectionUserWeight.type,
+            payload: {
+              decisionCollectionId: testDecisionCollectionId,
+              ...expectedUserWeight
+            }
+          })
 
-      expect(testOption).toEqual(expectedOption)
+          const testUserWeights = selectUserWeights(testState, testDecisionCollectionId)
+          expect(Object.keys(testUserWeights)).toHaveLength(Object.keys(initialUserWeights).length + 1)
+          const lastId = Object.keys(testUserWeights).slice(-1)[0]
+
+          expect(testUserWeights[lastId]).toEqual(expectedUserWeight)
+        })
+        it('increments user weight id', () => {
+          const testState = decisionCollections(initialState, {
+            type: addDecisionCollectionUserWeight.type,
+            payload: {
+              decisionCollectionId: testDecisionCollectionId,
+              ...expectedUserWeight
+            }
+          })
+
+          const testUserWeights = selectUserWeights(testState, testDecisionCollectionId)
+          expect(Object.keys(testUserWeights)).toHaveLength(Object.keys(initialUserWeights).length + 1)
+
+          const initialLastId = Object.keys(initialUserWeights).slice(-1)[0]
+          const expectedLastId = Object.keys(testUserWeights).slice(-1)[0]
+
+          expect(parseInt(expectedLastId)).toBe(parseInt(initialLastId) + 1)
+        })
+      })
+
+      describe('updateDecisionCollectionUserWeight', () => {
+        it('updates value at given id', () => {
+          const initialUserWeight = selectUserWeight(initialState, testDecisionCollectionId, testUserWeightId)
+          
+          const testState = decisionCollections(initialState, {
+            type: updateDecisionCollectionUserWeight.type,
+            payload: {
+              decisionCollectionId: testDecisionCollectionId,
+              id: testUserWeightId,
+              value: initialUserWeight.value + 1
+            }
+          })
+          
+          const testStateUserWeight = selectUserWeight(testState, testDecisionCollectionId, testUserWeightId)
+          expect(testStateUserWeight.value).toEqual(initialUserWeight.value + 1)
+        })
+        it('updates name at given id', () => {
+          const initialUserWeight = selectUserWeight(initialState, testUserWeightId)
+          
+          const testState = decisionCollections(initialState, {
+            type: updateDecisionCollectionUserWeight.type,
+            payload: {
+              decisionCollectionId: testDecisionCollectionId,
+              id: testUserWeightId,
+              name: expectedUserWeight.name
+            }
+          })
+          
+          const testStateUserWeight = selectUserWeight(testState, testDecisionCollectionId, testUserWeightId)
+          expect(testStateUserWeight).not.toEqual(initialUserWeight)
+          expect(testStateUserWeight.name).toEqual(expectedUserWeight.name)
+        })
+        it('updates name and value at given id', () => {
+          const initialUserWeight = selectUserWeight(decisionCollectionsInitialState, testUserWeightId)
+          
+          const testState = decisionCollections(decisionCollectionsInitialState, {
+            type: updateDecisionCollectionUserWeight.type,
+            payload: {
+              decisionCollectionId: testDecisionCollectionId,
+              id: testUserWeightId,
+              ...expectedUserWeight
+            }
+          })
+          
+          const testUserWeight = selectUserWeight(testState, testDecisionCollectionId, testUserWeightId)
+          expect(testUserWeight).not.toEqual(initialUserWeight)
+          expect(testUserWeight).toEqual(expectedUserWeight)
+        })
+      })
+      describe('deleteDecisionCollectionUserWeight', () => {
+        it('removes a user weight at a given id', () => {
+          const initialUserWeights = selectUserWeights(initialState, testDecisionCollectionId)
+          const initialUserWeightsLength = Object.keys(initialUserWeights).length
+
+          const testState = decisionCollections(initialState, {
+            type: deleteDecisionCollectionUserWeight.type,
+            payload: {
+              decisionCollectionId: testDecisionCollectionId,
+              id: testUserWeightId
+            }
+          })
+          
+          const testUserWeights = selectUserWeights(testState, testDecisionCollectionId)
+          expect(Object.keys(testUserWeights)).toHaveLength(initialUserWeightsLength - 1)
+          expect(testUserWeights[testUserWeightId]).not.toBeDefined()
+        })
+
+        it('removes option.weights with the same id', () => {
+          const initialOptionCollection = selectOptionCollection(initialState, testDecisionCollectionId)
+          const initialOption = initialOptionCollection[testOptionId]
+          const initialOptionWeightLength = Object.keys(initialOption.weights).length
+          
+          expect(initialOption.weights[testUserWeightId]).toBeDefined();
+
+          const testState = decisionCollections(initialState, {
+            type: deleteDecisionCollectionUserWeight.type,
+            payload: {
+              decisionCollectionId: testDecisionCollectionId,
+              id: testUserWeightId
+            }
+          })
+          
+          const testOptionCollection = selectOptionCollection(testState, testDecisionCollectionId)
+          const testOption = testOptionCollection[testOptionId]
+          const testOptionLength = Object.keys(testOption.weights).length
+
+          expect(testOption.weights[testUserWeightId]).not.toBeDefined()
+          expect(testOptionLength).toEqual(initialOptionWeightLength - 1)
+        })
+      })
     })
-    it('should update a decision collection\'s option if id is not found with an id higher than all the others', () => {
-      const initialState = createFakeDecisionCollections()
+    
+    describe('Option CRUD', () => {
+      describe('createDecisionCollectionOption', () => {
+        it('adds an option to a given collection id', () => {
+          const initialOptionCollection = selectOptionCollection(
+            decisionCollectionsInitialState,
+            testDecisionCollectionId
+          )
 
-      const highestInitialOptionId = getHighestId(initialState[0].optionCollection)
+          const initialUserWeights = selectUserWeights(
+            decisionCollectionsInitialState,
+            testDecisionCollectionId
+          )
 
-      // get ID of first collection
-      const testCollectionId = initialState[0].id
-      // get ID of first user weight
+          const testState = decisionCollections(decisionCollectionsInitialState, {
+            type: createDecisionCollectionOption.type,
+            payload: {
+              decisionCollectionId: testDecisionCollectionId
+            }
+          })
 
-      const expectedOption = {
-        ...createFakeOption()
-      };
+          const testOptionCollection = selectOptionCollection(testState, testDecisionCollectionId)
+          expect(Object.keys(testOptionCollection)).toHaveLength(Object.keys(initialOptionCollection).length + 1)
 
-      const testState = decisionCollections(initialState, {
-        type: updateDecisionCollectionOption.type,
-        payload: {
-          option: expectedOption,
-          id: testCollectionId
-        }
+          const lastTestOptionId = Object.keys(testOptionCollection).slice(-1)[0]
+          const testOption = testOptionCollection[lastTestOptionId];
+
+          expect(testOption.weights).toHaveLength(Object.keys(initialUserWeights).length)
+        })
+        it('increments option id', () => {
+          const initialOptionCollection = selectOptionCollection(decisionCollectionsInitialState, testDecisionCollectionId)
+          const lastInitialId = Object.keys(initialOptionCollection).slice(-1)[0]
+
+          const testState = decisionCollections(decisionCollectionsInitialState, {
+            type: createDecisionCollectionOption.type,
+            payload: {
+              decisionCollectionId: testDecisionCollectionId,
+            }
+          })
+
+          const testOptionCollection = selectOptionCollection(testState, testDecisionCollectionId)
+          const lastTestId = Object.keys(testOptionCollection).slice(-1)[0]
+
+          expect(parseInt(lastTestId)).toBe(parseInt(lastInitialId) + 1)
+        })
       })
+      describe('updateDecisionCollectionOption', () => {
+        it('updates a decision collection\'s option name if name is given', () => {
+          const expectedOption = createFakeOption()
+          const expectedOptionName = expectedOption.name
+          const initialOptionName = selectOption(
+            decisionCollectionsInitialState,
+            testDecisionCollectionId,
+            testOptionId).name
 
-      const testOptions = testState[0].optionCollection
-      const testOption = testOptions[testOptions.length - 1]
+          expect(expectedOptionName).not.toEqual(initialOptionName)
+    
+          const testState = decisionCollections(decisionCollectionsInitialState, {
+            type: updateDecisionCollectionOption.type,
+            payload: {
+              decisionCollectionId: testDecisionCollectionId,
+              name: expectedOption.name,
+              id: testOptionId
+            }
+          })
 
-      expect(testOption.name).toEqual(expectedOption.name)
-      expect(testOption.value).toEqual(expectedOption.value)
-      expect(testOption.id).toEqual(highestInitialOptionId + 1)
-
-    })
-  })
-  describe('updateDecisionCollectionName', () => {
-    it('should update a decision collection\'s name if collection id is found', () => {
-      const initialState = createFakeDecisionCollections()
-
-      // get ID of first collection
-      const testCollectionId = initialState[0].id
-
-      const expectedName = "YOOOOOLOOOOO"
-
-      const testState = decisionCollections(initialState, {
-        type: updateDecisionCollectionName.type,
-        payload: {
-          name: expectedName,
-          id: testCollectionId
-        }
+          const testOptionName = selectOption(
+            testState,
+            testDecisionCollectionId,
+            testOptionId).name
+          
+          expect(testOptionName).toEqual(expectedOptionName)
+        })
       })
+      describe('updateDecisionCollectionOptionWeight', () => {
+        it('update an option weight at id', () => {
+          const initialWeightValue = selectOptionWeight(
+            decisionCollectionsInitialState,
+            testDecisionCollectionId,
+            testOptionId,
+            testOptionWeightId
+          ).value
 
-      expect(testState[0].name).toEqual(expectedName)
+          const expectedWeightValue = initialWeightValue + 1;
 
-    })
-  })
-  describe('deleteDecisionCollection', () => {
-    it('should delete a decision collection\'s by id', () => {
-      const initialState = createFakeDecisionCollections()
+          expect(initialWeightValue).not.toEqual(expectedWeightValue)
+    
+          const testState = decisionCollections(decisionCollectionsInitialState, {
+            type: updateDecisionCollectionOptionWeight.type,
+            payload: {
+              decisionCollectionId: testDecisionCollectionId,
+              optionId: testOptionId,
+              id: testOptionWeightId,
+              value: expectedWeightValue
+            }
+          })
 
-      // get ID of first collection
-      const testCollectionId = initialState[0].id
-
-      const testState = decisionCollections(initialState, {
-        type: deleteDecisionCollection.type,
-        payload: {
-          id: testCollectionId
-        }
+          const testOptionWeightValue = selectOptionWeight(
+            testState,
+            testDecisionCollectionId,
+            testOptionId,
+            testOptionWeightId
+          ).value
+          
+          expect(testOptionWeightValue).toEqual(expectedWeightValue)
+        })
       })
+      describe('deleteDecisionCollectionOption', () => {
+        it('removes a decision collection\'s option at given id', () => {
+          const initialOptionCollection = selectOptionCollection(decisionCollectionsInitialState, testDecisionCollectionId, testOptionId)
+          const initialOptionCollectionLength = Object.keys(initialOptionCollection).length
 
-      expect(testState.length).toEqual(initialState.length - 1)
-      expect(testState.find(dc => dc.id === testCollectionId)).not.toBeDefined()
+          expect(initialOptionCollection[testOptionId]).toBeDefined()
 
+          const testState = decisionCollections(decisionCollectionsInitialState, {
+            type: deleteDecisionCollectionOption.type,
+            payload: {
+              decisionCollectionId: testDecisionCollectionId,
+              id: testOptionId
+            }
+          })
+
+          const testOptionCollection = selectOptionCollection(testState, testDecisionCollectionId, testOptionId)
+          const testOptionCollectionLength = Object.keys(testOptionCollection).length
+            
+          expect(testOptionCollectionLength).toEqual(initialOptionCollectionLength - 1)
+          expect(testOptionCollection[testOptionId]).not.toBeDefined()
+        })
+      })
     })
   })
 })

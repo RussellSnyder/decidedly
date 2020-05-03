@@ -2,34 +2,28 @@ import { createFakeOptionWeights } from "./createFakeOptionWeights"
 import { createFakeWeightValue } from './createFakeWeightValue'
 
 export const createFakeOptionCollection = () => {
-  let fakeIndex = 0;
-  const options = [];
+  const options = {};
   for (let i = 0; i <= 5; i++ ) {
-    options.push({
-      id: fakeIndex,
-      name: `option name ${fakeIndex}`,
+    options[i] = {
+      name: `option name ${i}`,
       weights: createFakeOptionWeights()
-    })
-    fakeIndex++
+    }
   }
-
-  return options
 }
 
 export const createFakeOptionCollectionFromUserWeights = (userWeights) => {  
-  let fakeIndex = 0;
-  const options = [];
+  const options = {};
   for (let i = 0; i <= 5; i++ ) {
-    options.push({
-      id: fakeIndex,
-      name: `option name ${fakeIndex}`,
-      weights: userWeights.map(weight => ({
-        id: weight.id,
-        name: weight.name,
-        value: createFakeWeightValue()
-      }))
+    const weights = {}
+    Object.keys(userWeights).forEach(weightId => {
+      weights[weightId] = {
+        value: createFakeWeightValue
+      }
     })
-    fakeIndex++
+    options[i] = {
+      name: `option name ${i}`,
+      weights
+    }
   }
 
   return options

@@ -1,24 +1,17 @@
 import { createFakeWeightValue } from './createFakeWeightValue'
 
 export const createFakeUserWeights = () => {
-  const weights = [];
-  let fakeIndex = 0;
-  for (let i = 0; i <= 10; i++ ) {
-    weights.push({
-      id: fakeIndex,
-      name: `Weight name ${i}`,
-      value: createFakeWeightValue()
-    })
-    fakeIndex++
+  const weights = {};
+  for (let i = 1; i <= 10; i++ ) {
+    weights[i] = createFakeUserWeight(i)
   }
 
   return weights
 }
 
-export const createFakeUserWeight = () => {
+export const createFakeUserWeight = (id) => {
   return {
-    id: 42,
-    name: 'Fake Weight',
+    name: `Fake Weight ${id || Math.round(Math.random() * 500)}`,
     value: createFakeWeightValue()
   }
 }

@@ -1,11 +1,11 @@
 import { createFakeOptionCollectionFromUserWeights } from "./createFakeOptionCollection"
 import { createFakeUserWeights } from "./createFakeUserWeights"
 
-export const createFakeDecisionCollection = (userWeights, id = "") => {
+export const createFakeDecisionCollection = (id = 0) => {
+  const userWeights = createFakeUserWeights();
   return {
-    id,
     name: `fake decision collection ${id}`,
-    userWeights: userWeights || createFakeUserWeights(),
-    optionCollection: userWeights ? createFakeOptionCollectionFromUserWeights(userWeights) : createFakeUserWeights()
+    userWeights,
+    optionCollection: createFakeOptionCollectionFromUserWeights(userWeights)
   }
 }
