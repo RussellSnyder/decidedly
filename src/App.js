@@ -21,10 +21,10 @@ function App() {
           <NavLink exact to="/collections">DecisionCollection</NavLink>
 
           <Route exact path="/collections" component={DecisionCollections} />
-          <Route path="/collections/:collectionId" component={DecisionCollection} />
-          <Route path="/collections/:collectionId/weights" component={UserWeights} />
-          <Route path="/collections/:collectionId/options" exact component={OptionCollection} />
-          <Route path="/collections/:collectionId/options/:optionId" component={Option} />
+          <Route path="/collections/:decisionCollectionId" component={DecisionCollection} />
+          <Route path="/collections/:decisionCollectionId/weights" component={UserWeights} />
+          <Route path="/collections/:decisionCollectionId/options" exact component={OptionCollection} />
+          <Route path="/collections/:decisionCollectionId/options/:optionId" component={Option} />
         </Router>
       </div>  
     </div>

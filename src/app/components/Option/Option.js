@@ -6,11 +6,18 @@ import { getIndexFromId } from '../../utils/'
 import { CustomInput, Button, Form, FormGroup, Label, Input } from 'reactstrap';
 
 import {
-  updateDecisionCollectionOptionWeight,
-  updateDecisionCollectionOptionName,
+  createDecisionCollectionOption,
+  updateDecisionCollectionOption,
   deleteDecisionCollectionOption,
+  updateDecisionCollectionOptionWeight,
   selectDecisionCollections,
+  selectUserWeights,
+  selectOption,
+  selectOptionWeights,
+  selectOptionWeight,
 } from '../DecisionCollections/DecisionCollectionsSlice';
+
+import EditableInput from '../EditableInput/EditableInput'
 
 export const OPTION_VIEWS = {
   NEW: "NEW",
@@ -19,67 +26,43 @@ export const OPTION_VIEWS = {
 }
 
 function Option(props) {
-  const { collectionId, optionId } = props.match.params // coming from React Router.
-  const { history } = props
-
-  console.log('history', collectionId, optionId)
-  const decisionCollections = useSelector(selectDecisionCollections);
-  const decisionCollection = decisionCollections[getIndexFromId(decisionCollections, collectionId)]
-  const { optionCollection, userWeights } = decisionCollection
-  const option = optionCollection[getIndexFromId(optionCollection, optionId)]
-  console.log('option', option)
-
-  const weights = option.weights
-
   const dispatch = useDispatch();
 
-  const [name, setName] = useState(option.name)
-  const [isEditingName, setIsEditingName] = useState(false)
+  const { decisionCollectionId, optionId } = props.match.params // coming from React Router.
+  const { history } = props
 
-  const DisplayName = () => {
-    const notEditing = (
-      <div className="editable" onClick={() => setIsEditingName(true)}>
-        <h2>
-          {name}
-        </h2>
-      </div>
-    )
+  const decisionCollections = useSelector(selectDecisionCollections);
 
-    const editing = (
-      <div className="editable">
-        <Input
-          key={`option-name-${option.id}`}
-          onKeyDown={(e) => {
-            if (e.keyCode === 13) {
-              setIsEditingName(false)
-              setName(e.target.value)  
-            }
-          }}
-          onBlur={(e) => {
-            setIsEditingName(false)
-            setName(e.target.value)
-          }}
-          defaultValue={name}
-        />
-      </div>
-    )
-
-    return isEditingName ? editing : notEditing
-  }
+  const option = selectOption(decisionCollections, decisionCollectionId, optionId)
+  const userWeights = selectUserWeights(decisionCollections, decisionCollectionId)
+  const optionWeights = selectOptionWeights(decisionCollections, decisionCollectionId, optionId);
 
   return (
     <div className="option container">
       <div className="row mb-4">
         <div className="col-sm-8">
-          <DisplayName />
+          <h2>
+            <EditableInput
+              value={option.name}
+              onChangeHandler={({value}) => {
+                console.log(value)
+                dispatch(updateDecisionCollectionOption({
+                  decisionCollectionId,
+                  optionId,
+                  name: value
+                }))
+              }}
+              placeholder={"option name"}
+            />
+          </h2>
         </div>
         <div className="col-sm-4 text-right">
           <Button
             color="danger"
             className="pull-right"
             onClick={() => dispatch(deleteDecisionCollectionOption({
-              id: collectionId,
-              option
+              decisionCollectionId,
+              optionId
             }))}
           >
             Delete 
@@ -88,26 +71,19 @@ function Option(props) {
       </div>
       
       <div className="weights">
-        {weights.map((weight, i) => {
-          console.log(weight)
-          const { name, id } = userWeights[i]
-          let props = {
-            value: weight.value,
-            name,
-            id
-          }
+        {Object.entries(optionWeights).map(([optionWeightId, optionWeight]) => {
           return <ImportanceSlider
-            key={`option-${weight.id}`}
-            { ...props }
+            id={optionWeightId}
+            key={`option-${optionWeightId}`}
+            value={optionWeight.value}
+            name={userWeights[optionWeightId].name}
             handleValueChange={(value) => {
-              console.log({value})
               dispatch(updateDecisionCollectionOptionWeight({
-                id: collectionId,
+                decisionCollectionId,
                 optionId,
-                weightId: weight.id,
-                value
+                optionWeightId,
+                value,
               }))
-              history.push(`/collections/${collectionId}/options/${option.id}`)
             }}
           />
         })}

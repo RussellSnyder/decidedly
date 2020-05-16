@@ -6,14 +6,12 @@ import store from '../../store'
 import { getIndexFromId } from '../../utils/'
 
 import {
-  updateDecisionCollectionUserWeight,
-  deleteDecisionCollectionUserWeight,
+  createDecisionCollectionOption,
   updateDecisionCollectionOption,
   deleteDecisionCollectionOption,
-  updateDecisionCollectionName,
-  deleteDecisionCollection,
   selectDecisionCollections,
-  createDecisionCollectionOption,
+  selectOptionCollection,
+  selectUserWeights,
 } from '../DecisionCollections/DecisionCollectionsSlice'
 
 import {
@@ -22,14 +20,17 @@ import {
 } from 'reactstrap';
 
 import Option from '../Option/Option';
+import styles from './OptionCollection.module.css';
 
 function OptionCollection(props) {
   const dispatch = useDispatch();
   const { history } = props;
-  const { collectionId } = props.match.params // coming from React Router.
+
+  const { decisionCollectionId } = props.match.params
+
   const decisionCollections = useSelector(selectDecisionCollections);
-  const decisionCollection = decisionCollections[getIndexFromId(decisionCollections, collectionId)]
-  const { name, userWeights, optionCollection, id } = decisionCollection
+  const optionCollection = selectOptionCollection(decisionCollections, decisionCollectionId)
+  const userWeights = selectUserWeights(decisionCollections, decisionCollectionId)
 
   const OptionsTable = () => {
     return (
@@ -41,17 +42,19 @@ function OptionCollection(props) {
           </tr>
         </thead>
         <tbody>
-          {optionCollection.map(option => {
-            const totalScore = option.weights.reduce((total, currentWeight) => {
+          {Object.entries(optionCollection).map(([optionId, option]) => {
+            const totalScore = Object.entries(option.weights).reduce((total, [weightId, currentWeight]) => {
+              const userWeightValue = userWeights[weightId].value
               // TODO weight this by userWeights
-              return total + currentWeight.value
+              return total + (currentWeight.value * userWeightValue)
             }, 0)
 
             return (
               <tr
-                key={`option-${option.id}`}
+                className={styles['option-table-row']}
+                key={`option-${optionId}`}
                 onClick={() => {
-                  history.push(`/collections/${collectionId}/options/${option.id}`)
+                  history.push(`/collections/${decisionCollectionId}/options/${optionId}`)
                 }}>
                 <th scope="row">{option.name}</th>
                 <th>{totalScore}</th>
@@ -74,9 +77,9 @@ function OptionCollection(props) {
               outline
               onClick={() => {
                 dispatch(createDecisionCollectionOption({
-                  id: collectionId
+                  decisionCollectionId
                 }))
-                history.push(`/collections/${collectionId}/options`)    
+                history.push(`/collections/${decisionCollectionId}/options`)    
               }}>
                 Create Option
             </Button>

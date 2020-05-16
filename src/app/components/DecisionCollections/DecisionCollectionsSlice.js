@@ -6,11 +6,11 @@ export const decisionCollectionsInitialState = {
     userWeights: {
       1: {
         name: "Weight 1",
-        value: 0
+        value: 2
       },
       2: {
         name: "Weight 2",
-        value: 0
+        value: 4
       }
     },
     optionCollection: {
@@ -18,10 +18,10 @@ export const decisionCollectionsInitialState = {
         name: "Option 1",
         weights: {
           1: {
-            value: 0
+            value: 2
           },
           2: {
-            value: 0
+            value: 2
           }
         }
       },
@@ -29,10 +29,10 @@ export const decisionCollectionsInitialState = {
         name: "Option 2",
         weights: {
           1: {
-            value: 0
+            value: -7
           },
           2: {
-            value: 0
+            value: 1
           }
         }
       }
@@ -43,7 +43,7 @@ export const decisionCollectionsInitialState = {
     userWeights: {
       1: {
         name: "Weight 1",
-        value: 0
+        value: 4
       },
       2: {
         name: "Weight 2",
@@ -55,10 +55,10 @@ export const decisionCollectionsInitialState = {
         name: "Option 1",
         weights: {
           1: {
-            value: 0
+            value: -2
           },
           2: {
-            value: 0
+            value: -5
           }
         }
       },
@@ -66,10 +66,10 @@ export const decisionCollectionsInitialState = {
         name: "Option 2",
         weights: {
           1: {
-            value: 0
+            value: 2
           },
           2: {
-            value: 0
+            value: 6
           }
         }
       }
@@ -93,14 +93,6 @@ export const decisionCollectionInitialState = {
   optionCollection: [],
 }
 
-export const selectDecisionCollection = (state, id) => state[id]
-export const selectUserWeights = (state, id) => selectDecisionCollection(state, id).userWeights
-export const selectOptionCollection = (state, id) => selectDecisionCollection(state, id).optionCollection
-export const selectUserWeight = (state, id, weightId) => selectUserWeights(state, id)[weightId]
-export const selectOption = (state, id, optionId) => selectOptionCollection(state, id)[optionId]
-export const selectOptionWeights = (state, id, optionId) => selectOption(state, id, optionId).weights
-export const selectOptionWeight = (state, id, optionId, weightId) => selectOptionWeights(state, id, optionId)[weightId]
-
 export const decisionCollectionsSlice = createSlice({
   name: 'decisionCollections',
   initialState: decisionCollectionsInitialState,
@@ -113,6 +105,12 @@ export const decisionCollectionsSlice = createSlice({
       }
 
       state[id] = newDC
+    },
+
+    updateDecisionCollectionName(state, action) {
+      let { id, name } = action.payload
+
+      state[id].name = name
     },
 
     deleteDecisionCollection(state, action) {
@@ -151,26 +149,26 @@ export const decisionCollectionsSlice = createSlice({
     },
 
     updateDecisionCollectionUserWeight(state, action) {
-      const { decisionCollectionId, id, name, value } = action.payload;
+      const { decisionCollectionId, userWeightId, name, value } = action.payload;
 
-      const userWeight = selectUserWeight(state, decisionCollectionId, id)
+      const userWeight = selectUserWeight(state, decisionCollectionId, userWeightId)
 
-      if (value) userWeight.value = value
+      if (value !== undefined) userWeight.value = value
       if (name) userWeight.name = name      
     },
 
     deleteDecisionCollectionUserWeight(state, action) {
-      const { decisionCollectionId, id } = action.payload;
+      const { decisionCollectionId, userWeightId } = action.payload;
 
       const userWeights = selectUserWeights(state, decisionCollectionId)
-      delete userWeights[id]
+      delete userWeights[userWeightId]
       
       // also remove the userWeight from the options
       const optionCollection = selectOptionCollection(state, decisionCollectionId)
 
       Object.keys(optionCollection).forEach(optionId => {
         const option = optionCollection[optionId];
-        delete option.weights[id]
+        delete option.weights[userWeightId]
       })
     },
 
@@ -197,26 +195,26 @@ export const decisionCollectionsSlice = createSlice({
     },
 
     updateDecisionCollectionOption(state, action) {
-      const { decisionCollectionId, id, name } = action.payload;
+      const { decisionCollectionId, optionId, name } = action.payload;
 
-      const option = selectOption(state, decisionCollectionId, id)
+      const option = selectOption(state, decisionCollectionId, optionId)
       // currently, you can only update the name
       if (name) option.name = name
     },
 
     deleteDecisionCollectionOption(state, action) {
-      const { decisionCollectionId, id } = action.payload;
+      const { decisionCollectionId, optionId } = action.payload;
 
       const optionCollection = selectOptionCollection(state, decisionCollectionId)
-      delete optionCollection[id]
+      delete optionCollection[optionId]
     },
 
     updateDecisionCollectionOptionWeight(state, action) {
-      const { decisionCollectionId, optionId, id, value } = action.payload;
+      const { decisionCollectionId, optionId, optionWeightId, value } = action.payload;
 
-      const weight = selectOptionWeight(state, decisionCollectionId, optionId, id)
+      const weight = selectOptionWeight(state, decisionCollectionId, optionId, optionWeightId)
 
-      if (value) weight.value = value
+      if (value !== undefined) weight.value = value
     },
   },
 });
@@ -224,6 +222,7 @@ export const decisionCollectionsSlice = createSlice({
 export const {
   createDecisionCollection,
   deleteDecisionCollection,
+  updateDecisionCollectionName,
 
   addDecisionCollectionUserWeight,
   updateDecisionCollectionUserWeight,
@@ -237,5 +236,13 @@ export const {
 } = decisionCollectionsSlice.actions;
 
 export const selectDecisionCollections = state => state.decisionCollections;
+export const selectDecisionCollection = (state, id) => state[id]
+export const selectUserWeights = (state, id) => selectDecisionCollection(state, id).userWeights
+export const selectOptionCollection = (state, id) => selectDecisionCollection(state, id).optionCollection
+export const selectUserWeight = (state, id, weightId) => selectUserWeights(state, id)[weightId]
+export const selectOption = (state, id, optionId) => selectOptionCollection(state, id)[optionId]
+export const selectOptionWeights = (state, id, optionId) => selectOption(state, id, optionId).weights
+export const selectOptionWeight = (state, id, optionId, weightId) => selectOptionWeights(state, id, optionId)[weightId]
+
 
 export default decisionCollectionsSlice.reducer;

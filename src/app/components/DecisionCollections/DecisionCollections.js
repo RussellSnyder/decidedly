@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import store from '../../store'  
 
-import './DecisionCollections.module.css';
-
+import style from './DecisionCollections.module.css';
 import {
   createDecisionCollection,
   selectDecisionCollections
@@ -21,23 +20,11 @@ import {
 function DecisionCollections({ history }) {
   const dispatch = useDispatch();
   const decisionCollections = useSelector(selectDecisionCollections);
-
-  store.subscribe(() => {
-    const previous = decisionCollections;
-    const current = store.getState().decisionCollections
-    if (!previous || !current) { return }
-
-    if (current.length > previous.length) {
-      // something was added if this is true
-      const newCollectionId = current.slice(-1)[0].id
-      history.push(`/collections/${newCollectionId}`)    
-    }
-  })
-
+  console.log(Object.entries(decisionCollections))
   return (
     <div className="decision-collections" data-testid="decision-collections">
-      <div className="container">
-        <h2>Decision Collections</h2>
+      <div className="container mb-5">
+        <h2 className="mb-3">Decision Collections</h2>
         <Button
           data-testid="create"
           onClick={() => {
@@ -47,22 +34,26 @@ function DecisionCollections({ history }) {
           create decision collection 
         </Button>
       </div>
+      <hr/>
       <div className="container">
-        {decisionCollections.map(dc => {
+        {Object.entries(decisionCollections).map(([id, dc]) => {
+          const factors = Object.values(dc.userWeights)
+          const options = Object.values(dc.optionCollection)
+
           return <div
-            key={dc.id}
-            className="row"
-            onClick={() => history.push(`/collections/${dc.id}`)}
+            key={id}
+            className={`row mb-3 ${style['dc-preview']}`}
+            onClick={() => history.push(`/collections/${id}`)}
           >
             <div className="col-md-6">
               <h4>{dc.name}</h4>
               <ul className="list-unstyled">
-                <li>{dc.userWeights.length} Factors</li>
-                <li>{dc.optionCollection.length} Options</li>
+                <li>{factors.length} Factors</li>
+                <li>{options.length} Options</li>
               </ul>
             </div>
             <div className="col-md-6">
-              {dc.userWeights.map(weight => weight.name).join(", ")}
+              {factors.map((weight) => weight.name).join(", ")}
             </div>
           </div>
         })}

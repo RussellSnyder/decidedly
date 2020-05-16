@@ -2,45 +2,37 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import './UserWeights.module.css';
 import ImportanceSlider, { IMPORTANCE_SLIDER_MAX, IMPORTANCE_SLIDER_MIN } from '../ImportanceSlider/ImportanceSlider'
-import { getIndexFromId } from '../../utils/'
 import {
-  createDecisionCollection,
+  addDecisionCollectionUserWeight,
   updateDecisionCollectionUserWeight,
   deleteDecisionCollectionUserWeight,
-  updateDecisionCollectionOption,
-  deleteDecisionCollectionOption,
-  updateDecisionCollectionName,
-  deleteDecisionCollection,
-  createDecisionCollectionOption,
-  selectDecisionCollections,
+  selectUserWeights,
+  selectDecisionCollections
 } from '../DecisionCollections/DecisionCollectionsSlice'
 
 import { CustomInput, Button, Form, FormGroup, Label, Input } from 'reactstrap';
 
 function UserWeights(props) {
   const dispatch = useDispatch();
-  const { history } = props;
-  const { collectionId } = props.match.params 
+
+  const { decisionCollectionId } = props.match.params
+
   const decisionCollections = useSelector(selectDecisionCollections);
-  const decisionCollection = decisionCollections[getIndexFromId(decisionCollections, collectionId)]
-  const { userWeights, id } = decisionCollection
+  const userWeights = selectUserWeights(decisionCollections, decisionCollectionId)
 
   const [newWeightValue, setNewWeightValue] = useState(0);
   const [newWeightName, setNewWeightName] = useState('');
   const [errors, setErrors] = useState([]);
 
   const handleNewWeightSubmit = () => {
-    if (!newWeightName || newWeightName.length < 1) {
+    if (!newWeightName || newWeightName.trim().length < 1) {
       setErrors([...errors, "please enter a name"])
     } else {
-      dispatch(updateDecisionCollectionUserWeight({
-        id,
-        userWeight: {
-          name: newWeightName,
-          value: newWeightValue
-        }
+      dispatch(addDecisionCollectionUserWeight({
+        decisionCollectionId,
+        name: newWeightName,
+        value: newWeightValue
       }))
-      history.push(`/collections/${collectionId}/weights/`)    
 
       setNewWeightName("")
       setNewWeightValue(0)
@@ -111,29 +103,31 @@ function UserWeights(props) {
         </Form>
       </div>
       <div className="weights">
-        {userWeights && userWeights.map(userWeight => {
+        {userWeights && Object.entries(userWeights).map(([userWeightId, userWeight]) => {
+          console.log(userWeight, userWeightId)
         return <ImportanceSlider
-          key={`userweight-${userWeight.id}`}
+          key={`userweight-${userWeightId}`}
+          id={`userweight-${userWeightId}`}
           { ...userWeight }
           handleNameChange={(name) => 
-            updateDecisionCollectionUserWeight({
-              id,
-              userWeightId: userWeight.id,
+            dispatch(updateDecisionCollectionUserWeight({
+              decisionCollectionId,
+              userWeightId,
               name
-            })
+            }))
           }
           handleValueChange={(value) => 
-            updateDecisionCollectionUserWeight({
-              id,
-              userWeightId: userWeight.id,
+            dispatch(updateDecisionCollectionUserWeight({
+              decisionCollectionId,
+              userWeightId,
               value
-            })
+            }))
           }
-          handleDelete={() => deleteDecisionCollectionUserWeight({
-            id,
-            userWeight
-          })
-}
+          handleDelete={() => 
+            dispatch(deleteDecisionCollectionUserWeight({
+              decisionCollectionId,
+              userWeightId}))
+          }
         />})}
       </div>
     </div>

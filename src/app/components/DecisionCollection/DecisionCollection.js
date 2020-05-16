@@ -7,87 +7,62 @@ import UserWeights from '../UserWeights/UserWeights'
 import OptionCollection from '../OptionCollection/OptionCollection'
 
 import {
+  createDecisionCollection,
+  deleteDecisionCollection,
+  updateDecisionCollectionName,
+
+  addDecisionCollectionUserWeight,
   updateDecisionCollectionUserWeight,
   deleteDecisionCollectionUserWeight,
+
+  createDecisionCollectionOption,
   updateDecisionCollectionOption,
   deleteDecisionCollectionOption,
-  updateDecisionCollectionName,
-  deleteDecisionCollection,
+
+  updateDecisionCollectionOptionWeight,
+
   selectDecisionCollections,
-  createDecisionCollectionOption,
-  getIndexFromId
 } from '../DecisionCollections/DecisionCollectionsSlice'
 
 import { CustomInput, Button, Form, FormGroup, Label, Input } from 'reactstrap';
 
+import EditableInput from '../EditableInput/EditableInput';
+
 function DecisionCollection(props) {
   const dispatch = useDispatch();
-  const { history } = props;
-  const { collectionId } = props.match.params // coming from React Router.
+  const { decisionCollectionId } = props.match.params // coming from React Router.
   const decisionCollections = useSelector(selectDecisionCollections);
-  const decisionCollection = decisionCollections[getIndexFromId(decisionCollections, collectionId)]
-  const { name, userWeights, optionCollection, id } = decisionCollection
+  const decisionCollection = decisionCollections[decisionCollectionId]
+  const { name, userWeights, optionCollection } = decisionCollection
 
   return (
     <div className="decision-collection">
-      <h2>{name}</h2>
-      <Input
-        onChange={(e) => {
-          dispatch(updateDecisionCollectionName({
-            name: e.target.value,
-            id
-          }))
-        }}
-        value={name}
-        type="text"
-        name="name"
-        placeholder="name of decision collection" />
+      <h2>
+        <EditableInput
+          value={name}
+          onChangeHandler={({value}) => dispatch(updateDecisionCollectionName({
+            name: value,
+            id: decisionCollectionId
+          }))}
+          placeholder="Collection Name"/>
+      </h2>
       <hr/>
       <div className="row mb-4">
         <div className="col-6">
           <Link className="btn btn-info btn-block"
-            to={`/collections/${collectionId}/weights`}>
+            to={`/collections/${decisionCollectionId}/weights`}>
             Weights
           </Link>
         </div>
-        {userWeights.length > 0 && <div className="col-6">
+        {Object.keys(userWeights).length > 0 && <div className="col-6">
           <Link
             className="btn btn-info btn-block"
-            to={`/collections/${collectionId}/options`}
+            to={`/collections/${decisionCollectionId}/options`}
           >
             Options
           </Link>
         </div>}
       </div>
-      {/* <UserWeights
-        userWeights={userWeights}     
-        handleSave={(payload) => dispatch(updateDecisionCollectionUserWeight({
-          userWeight: payload,
-          id
-        }))}
-        handleDelete={({userWeight}) => {
-          dispatch(deleteDecisionCollectionUserWeight({
-            id,
-            userWeight
-          }))
-        }}
-      /> */}
-      {/* <OptionCollection
-        collectionId={id}
-        createOption={() => dispatch(createDecisionCollectionOption({
-          id
-        }))}
-        optionCollection={optionCollection}
-        userWeights={userWeights}
-        handleSave={(option) => dispatch(updateDecisionCollectionOption({
-          option,
-          id
-        }))}
-        handleDelete={({option}) => dispatch(deleteDecisionCollectionOption({
-          option,
-          id
-        }))}
-      /> */}
   </div>
   );
 }
