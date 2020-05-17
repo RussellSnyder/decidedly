@@ -18,8 +18,8 @@ function App() {
             <h1 className="text-center">Decidedly</h1>
           </NavLink>
           <br/>
-          <NavLink exact to="/collections">DecisionCollection</NavLink>
-
+          <NavLink exact to="/collections">Decision Collections</NavLink>
+          <hr/>
           <Route exact path="/collections" component={DecisionCollections} />
           <Route path="/collections/:decisionCollectionId" component={DecisionCollection} />
           <Route path="/collections/:decisionCollectionId/weights" component={UserWeights} />

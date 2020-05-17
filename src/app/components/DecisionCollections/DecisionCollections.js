@@ -20,6 +20,7 @@ import {
 function DecisionCollections({ history }) {
   const dispatch = useDispatch();
   const decisionCollections = useSelector(selectDecisionCollections);
+
   return (
     <div className="decision-collections" data-testid="decision-collections">
       <div className="container mb-5">

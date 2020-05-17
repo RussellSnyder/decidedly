@@ -100,8 +100,8 @@ export const decisionCollectionsSlice = createSlice({
     createDecisionCollection(state) {
       const id = getNextId(state);
       const newDC = {
-        ...decisionCollectionInitialState,
-        name: `Decision Collection ${id}`
+        ...decisionCollectionsInitialState[1],
+        name: `Decision Collection ${id}`,
       }
 
       state[id] = newDC
