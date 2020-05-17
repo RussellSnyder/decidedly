@@ -178,11 +178,10 @@ export const decisionCollectionsSlice = createSlice({
       const optionCollection = selectOptionCollection(state, decisionCollectionId)
       const userWeights = selectUserWeights(state, decisionCollectionId)
 
-      const weights = Object.keys(userWeights).map(userWeightKey => {
-        return {
-          [userWeightKey]: {
-            value: 0
-          }
+      const weights = {};
+      Object.keys(userWeights).forEach(userWeightKey => {
+        weights[userWeightKey] = {
+          value: 0
         }
       })
 

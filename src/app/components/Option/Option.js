@@ -45,7 +45,6 @@ function Option(props) {
             <EditableInput
               value={option.name}
               onChangeHandler={({value}) => {
-                console.log(value)
                 dispatch(updateDecisionCollectionOption({
                   decisionCollectionId,
                   optionId,
@@ -60,10 +59,13 @@ function Option(props) {
           <Button
             color="danger"
             className="pull-right"
-            onClick={() => dispatch(deleteDecisionCollectionOption({
-              decisionCollectionId,
-              optionId
-            }))}
+            onClick={() => {
+              dispatch(deleteDecisionCollectionOption({
+                decisionCollectionId,
+                optionId
+              }))
+              history.push(`/collections/${decisionCollectionId}/options`)
+            }}
           >
             Delete 
           </Button>

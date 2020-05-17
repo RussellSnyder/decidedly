@@ -104,7 +104,6 @@ function UserWeights(props) {
       </div>
       <div className="weights">
         {userWeights && Object.entries(userWeights).map(([userWeightId, userWeight]) => {
-          console.log(userWeight, userWeightId)
         return <ImportanceSlider
           key={`userweight-${userWeightId}`}
           id={`userweight-${userWeightId}`}

@@ -79,7 +79,7 @@ function OptionCollection(props) {
                 dispatch(createDecisionCollectionOption({
                   decisionCollectionId
                 }))
-                history.push(`/collections/${decisionCollectionId}/options`)    
+                  // history.push(`/collections/${decisionCollectionId}/options/`)    
               }}>
                 Create Option
             </Button>
