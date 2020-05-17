@@ -107,16 +107,30 @@ export const decisionCollectionsSlice = createSlice({
       state[id] = newDC
     },
 
-    updateDecisionCollectionName(state, action) {
-      let { id, name } = action.payload
+    cloneDecisionCollection(state, action) {
+      let { decisionCollectionId } = action.payload
 
-      state[id].name = name
+      const decisionCollectionToCopy = state[decisionCollectionId];
+      const newId = getNextId(state);
+
+      const newDC = {
+        ...decisionCollectionToCopy,
+        name: `${decisionCollectionToCopy.name} copy ${newId}`,
+      }
+
+      state[newId] = newDC
+    },
+
+    updateDecisionCollectionName(state, action) {
+      let { decisionCollectionId, name } = action.payload
+
+      state[decisionCollectionId].name = name
     },
 
     deleteDecisionCollection(state, action) {
-      let { id } = action.payload
+      let { decisionCollectionId } = action.payload
 
-      delete state[id]
+      delete state[decisionCollectionId]
     },
 
     addDecisionCollectionUserWeight(state, action) {
@@ -222,6 +236,7 @@ export const {
   createDecisionCollection,
   deleteDecisionCollection,
   updateDecisionCollectionName,
+  cloneDecisionCollection,
 
   addDecisionCollectionUserWeight,
   updateDecisionCollectionUserWeight,

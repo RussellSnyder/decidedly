@@ -7,9 +7,6 @@ import { CustomInput,
   Input
 } from 'reactstrap';
 
-export const IMPORTANCE_SLIDER_MAX = 7;
-export const IMPORTANCE_SLIDER_MIN = -7;
-
 function ImportanceSlider({
   id,
   name,
@@ -17,6 +14,8 @@ function ImportanceSlider({
   handleNameChange,
   handleValueChange,
   handleDelete,
+  min = -10,
+  max = 10,
 }) {
   const [isEditing, setIsEditing] = useState(false);
 
@@ -62,14 +61,14 @@ function ImportanceSlider({
             id={id}
             type="range"
             value={value}
-            min={IMPORTANCE_SLIDER_MIN}
-            max={IMPORTANCE_SLIDER_MAX}
+            min={min}
+            max={max}
             onChange={(e) => handleValueChange(parseInt(e.target.value))}
           />
           <div className="row">
             <div className="col-4 text-left">
               <Button onClick={()=> {
-                if (value <= IMPORTANCE_SLIDER_MIN) return;
+                if (value <= min) return;
                 handleValueChange(value - 1)
               }}>
                 -
@@ -80,7 +79,7 @@ function ImportanceSlider({
             </div>
             <div className="col-4 text-right">
               <Button onClick={()=> {
-                if (value >= IMPORTANCE_SLIDER_MAX) return
+                if (value >= max) return
                 handleValueChange(value + 1)
               }}>
                 +

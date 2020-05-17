@@ -8,6 +8,7 @@ import decisionCollections, {
     selectOptionWeights,
     selectOptionWeight,
     createDecisionCollection,
+    cloneDecisionCollection,
     deleteDecisionCollection,
     addDecisionCollectionUserWeight,
     updateDecisionCollectionUserWeight,
@@ -139,6 +140,24 @@ describe('decisionCollectionsSlice', () => {
           expect(Object.keys(testState)).toHaveLength(initialStateLength + 1)
         })
       })
+      describe("cloneDecisionCollection", () => {
+        it('clones a decision collection with id', () => {
+          const initialState = createFakeDecisionCollections()
+          const initialStateKeys = Object.keys(initialState);
+          const initialStateLength = initialStateKeys.length
+
+          const testState = decisionCollections(initialState, {
+            type: cloneDecisionCollection.type,
+            payload: {
+              decisionCollectionId: initialStateLength
+            }
+          })
+
+          const testStateLength = Object.keys(testState).length    
+          expect(testStateLength).toBe(initialStateLength + 1)
+          expect(testState[testStateLength].userWeights).toEqual(initialState[initialStateLength].userWeights)
+        })
+      })
       describe('deleteDecisionCollection', () => {
         it('deletes a decision collection\'s by id', () => {
           const initialLength = Object.keys(testState).length
@@ -146,7 +165,7 @@ describe('decisionCollectionsSlice', () => {
           const testState2 = decisionCollections(testState, {
             type: deleteDecisionCollection.type,
             payload: {
-              id: testDecisionCollectionId
+              decisionCollectionId: testDecisionCollectionId
             }
           })
     

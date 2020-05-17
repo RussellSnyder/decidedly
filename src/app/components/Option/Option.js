@@ -25,6 +25,9 @@ export const OPTION_VIEWS = {
   SHOW: "SHOW",
 }
 
+export const OPTION_VALUE_MAX = 10
+export const OPTION_VALUE_MIN = -10
+
 function Option(props) {
   const dispatch = useDispatch();
 
@@ -78,6 +81,8 @@ function Option(props) {
             id={optionWeightId}
             key={`option-${optionWeightId}`}
             value={optionWeight.value}
+            min={OPTION_VALUE_MIN}
+            max={OPTION_VALUE_MAX}
             name={userWeights[optionWeightId].name}
             handleValueChange={(value) => {
               dispatch(updateDecisionCollectionOptionWeight({

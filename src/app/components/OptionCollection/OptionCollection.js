@@ -22,6 +22,8 @@ import {
 import Option from '../Option/Option';
 import styles from './OptionCollection.module.css';
 
+import { OPTION_VALUE_MAX } from '../Option/Option';
+
 function OptionCollection(props) {
   const dispatch = useDispatch();
   const { history } = props;
@@ -31,6 +33,11 @@ function OptionCollection(props) {
   const decisionCollections = useSelector(selectDecisionCollections);
   const optionCollection = selectOptionCollection(decisionCollections, decisionCollectionId)
   const userWeights = selectUserWeights(decisionCollections, decisionCollectionId)
+  const highestPossiblePoints = Object.values(userWeights).reduce((total, current) => {
+    return total += current.value
+  }, 0) * OPTION_VALUE_MAX;
+
+  console.log(highestPossiblePoints);
 
   const OptionsTable = () => {
     return (
@@ -38,16 +45,17 @@ function OptionCollection(props) {
         <thead>
           <tr>
             <th>Name</th>
-            <th>Total Score</th>
+            <th>Score</th>
           </tr>
         </thead>
         <tbody>
           {Object.entries(optionCollection).map(([optionId, option]) => {
-            const totalScore = Object.entries(option.weights).reduce((total, [weightId, currentWeight]) => {
+            const totalPoints = Object.entries(option.weights).reduce((total, [weightId, currentWeight]) => {
               const userWeightValue = userWeights[weightId].value
-              // TODO weight this by userWeights
               return total + (currentWeight.value * userWeightValue)
             }, 0)
+
+            const percentScore = (totalPoints / highestPossiblePoints * 100).toFixed(1)
 
             return (
               <tr
@@ -57,7 +65,7 @@ function OptionCollection(props) {
                   history.push(`/collections/${decisionCollectionId}/options/${optionId}`)
                 }}>
                 <th scope="row">{option.name}</th>
-                <th>{totalScore}</th>
+                <th>{percentScore}%</th>
               </tr>
             )
           })}          

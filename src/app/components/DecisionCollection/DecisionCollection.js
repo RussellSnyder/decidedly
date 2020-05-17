@@ -42,7 +42,7 @@ function DecisionCollection(props) {
           value={name}
           onChangeHandler={({value}) => dispatch(updateDecisionCollectionName({
             name: value,
-            id: decisionCollectionId
+            decisionCollectionId
           }))}
           placeholder="Collection Name"/>
       </h2>

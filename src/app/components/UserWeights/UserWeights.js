@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import './UserWeights.module.css';
-import ImportanceSlider, { IMPORTANCE_SLIDER_MAX, IMPORTANCE_SLIDER_MIN } from '../ImportanceSlider/ImportanceSlider'
+import ImportanceSlider from '../ImportanceSlider/ImportanceSlider'
 import {
   addDecisionCollectionUserWeight,
   updateDecisionCollectionUserWeight,
@@ -11,6 +11,9 @@ import {
 } from '../DecisionCollections/DecisionCollectionsSlice'
 
 import { CustomInput, Button, Form, FormGroup, Label, Input } from 'reactstrap';
+
+export const USER_WEIGHT_VALUE_MAX = 10
+export const USER_WEIGHT_VALUE_MIN = 0
 
 function UserWeights(props) {
   const dispatch = useDispatch();
@@ -48,65 +51,13 @@ function UserWeights(props) {
           </h2>
         </div>
       </div> 
-
-      <div className="mb-5">
-        {errors.map(error => <p className="text-danger">
-          {error}
-        </p>)}
-        <Form
-          className="row"
-          onSubmit={(e) => {
-          e.preventDefault();
-          handleNewWeightSubmit()
-        }}>
-          <FormGroup className="col-sm-4">
-            <Label for="name">Weight Name</Label>
-            <Input
-              type="textarea"
-              rows="2"
-              onChange={(e) => setNewWeightName(e.target.value)}
-              value={newWeightName}
-              placeholder="name of weight"
-            />
-          </FormGroup>
-          <FormGroup className="col-sm-7">
-            <Label for="initialValue">Value</Label>
-            <CustomInput
-              type="range"
-              // value={value}
-              value={newWeightValue}
-              min={IMPORTANCE_SLIDER_MIN}
-              max={IMPORTANCE_SLIDER_MAX}
-              onChange={(e) => setNewWeightValue(parseInt(e.target.value))}
-              name="initialValue"
-              id="initialValue"
-            />
-            <div className="row">
-            <div className="col-4 text-left">
-              {IMPORTANCE_SLIDER_MIN}
-            </div>
-            <div className="col-4 text-center">
-              {newWeightValue}
-            </div>
-            <div className="col-4 text-right">
-              {IMPORTANCE_SLIDER_MAX}
-            </div>
-          </div>
-          </FormGroup>
-          <Button
-            className="col-sm-1"
-            color="success"
-            type="submit"
-          >
-            +
-          </Button>
-        </Form>
-      </div>
-      <div className="weights">
+      <div className="weights mb-3">
         {userWeights && Object.entries(userWeights).map(([userWeightId, userWeight]) => {
         return <ImportanceSlider
           key={`userweight-${userWeightId}`}
           id={`userweight-${userWeightId}`}
+          min={USER_WEIGHT_VALUE_MIN}
+          max={USER_WEIGHT_VALUE_MAX}
           { ...userWeight }
           handleNameChange={(name) => 
             dispatch(updateDecisionCollectionUserWeight({
@@ -129,6 +80,62 @@ function UserWeights(props) {
           }
         />})}
       </div>
+      <hr/>
+      <div className="mt-3">
+        <h4>Add New Weight</h4>
+        {errors.map(error => <p className="text-danger">
+          {error}
+        </p>)}
+        <Form
+          className="row"
+          onSubmit={(e) => {
+          e.preventDefault();
+          handleNewWeightSubmit()
+        }}>
+          <FormGroup className="col-sm-4">
+            <Input
+              type="textarea"
+              rows="3"
+              onChange={(e) => setNewWeightName(e.target.value)}
+              value={newWeightName}
+              placeholder="name of weight"
+            />
+          </FormGroup>
+          <FormGroup className="col-sm-7">
+            <Label for="initialValue">Value</Label>
+            <CustomInput
+              type="range"
+              // value={value}
+              value={newWeightValue}
+              min={USER_WEIGHT_VALUE_MIN}
+              max={USER_WEIGHT_VALUE_MAX}
+              onChange={(e) => setNewWeightValue(parseInt(e.target.value))}
+              name="initialValue"
+              id="initialValue"
+            />
+            <div className="row">
+            <div className="col-4 text-left">
+              {USER_WEIGHT_VALUE_MIN}
+            </div>
+            <div className="col-4 text-center">
+              {newWeightValue}
+            </div>
+            <div className="col-4 text-right">
+              {USER_WEIGHT_VALUE_MAX}
+            </div>
+          </div>
+          </FormGroup>
+          <Button
+            outline
+            className="col-sm-1"
+            color="success"
+            type="submit"
+          >
+            Add
+          </Button>
+        </Form>
+      </div>
+
     </div>
   );
 }
