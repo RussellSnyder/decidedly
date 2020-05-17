@@ -1,14 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import './OptionCollection.module.css';
-import ImportanceSlider, { IMPORTANCE_SLIDER_MAX, IMPORTANCE_SLIDER_MIN } from '../ImportanceSlider/ImportanceSlider'
-import store from '../../store'  
-import { getIndexFromId } from '../../utils/'
 
 import {
   createDecisionCollectionOption,
-  updateDecisionCollectionOption,
-  deleteDecisionCollectionOption,
   selectDecisionCollections,
   selectOptionCollection,
   selectUserWeights,
@@ -19,7 +14,6 @@ import {
   Table
 } from 'reactstrap';
 
-import Option from '../Option/Option';
 import styles from './OptionCollection.module.css';
 
 import { OPTION_VALUE_MAX } from '../Option/Option';

@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import store from '../../store'  
 
 import style from './DecisionCollections.module.css';
 import {
@@ -11,12 +10,7 @@ import {
 } from './DecisionCollectionsSlice';
 
 import {
-  CustomInput,
   Button,
-  Form,
-  FormGroup,
-  Label,
-  Input
 } from 'reactstrap';
 
 function DecisionCollections({ history }) {

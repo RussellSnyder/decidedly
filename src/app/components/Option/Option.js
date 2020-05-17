@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import './Option.module.css';
-import ImportanceSlider, { IMPORTANCE_SLIDER_MAX, IMPORTANCE_SLIDER_MIN } from '../ImportanceSlider/ImportanceSlider';
-import { getIndexFromId } from '../../utils/'
-import { CustomInput, Button, Form, FormGroup, Label, Input } from 'reactstrap';
+import ImportanceSlider from '../ImportanceSlider/ImportanceSlider';
+import { Button } from 'reactstrap';
 
 import {
-  createDecisionCollectionOption,
   updateDecisionCollectionOption,
   deleteDecisionCollectionOption,
   updateDecisionCollectionOptionWeight,
@@ -14,16 +12,9 @@ import {
   selectUserWeights,
   selectOption,
   selectOptionWeights,
-  selectOptionWeight,
 } from '../DecisionCollections/DecisionCollectionsSlice';
 
 import EditableInput from '../EditableInput/EditableInput'
-
-export const OPTION_VIEWS = {
-  NEW: "NEW",
-  EDIT: "EDIT",
-  SHOW: "SHOW",
-}
 
 export const OPTION_VALUE_MAX = 10
 export const OPTION_VALUE_MIN = -10

@@ -1,30 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom'
 import './DecisionCollection.module.css';
-import ImportanceSlider from '../ImportanceSlider/ImportanceSlider'
-import UserWeights from '../UserWeights/UserWeights'
-import OptionCollection from '../OptionCollection/OptionCollection'
 
 import {
-  createDecisionCollection,
-  deleteDecisionCollection,
   updateDecisionCollectionName,
-
-  addDecisionCollectionUserWeight,
-  updateDecisionCollectionUserWeight,
-  deleteDecisionCollectionUserWeight,
-
-  createDecisionCollectionOption,
-  updateDecisionCollectionOption,
-  deleteDecisionCollectionOption,
-
-  updateDecisionCollectionOptionWeight,
-
   selectDecisionCollections,
 } from '../DecisionCollections/DecisionCollectionsSlice'
-
-import { CustomInput, Button, Form, FormGroup, Label, Input } from 'reactstrap';
 
 import EditableInput from '../EditableInput/EditableInput';
 
@@ -33,7 +15,7 @@ function DecisionCollection(props) {
   const { decisionCollectionId } = props.match.params // coming from React Router.
   const decisionCollections = useSelector(selectDecisionCollections);
   const decisionCollection = decisionCollections[decisionCollectionId]
-  const { name, userWeights, optionCollection } = decisionCollection
+  const { name, userWeights } = decisionCollection
 
   return (
     <div className="decision-collection">
