@@ -210,7 +210,7 @@ describe('decisionCollectionsSlice', () => {
             type: updateDecisionCollectionUserWeight.type,
             payload: {
               decisionCollectionId: testDecisionCollectionId,
-              id: testUserWeightId,
+              userWeightId: testUserWeightId,
               value: initialUserWeight.value + 1
             }
           })
@@ -225,7 +225,7 @@ describe('decisionCollectionsSlice', () => {
             type: updateDecisionCollectionUserWeight.type,
             payload: {
               decisionCollectionId: testDecisionCollectionId,
-              id: testUserWeightId,
+              userWeightId: testUserWeightId,
               name: expectedUserWeight.name
             }
           })
@@ -241,7 +241,7 @@ describe('decisionCollectionsSlice', () => {
             type: updateDecisionCollectionUserWeight.type,
             payload: {
               decisionCollectionId: testDecisionCollectionId,
-              id: testUserWeightId,
+              userWeightId: testUserWeightId,
               ...expectedUserWeight
             }
           })
@@ -260,7 +260,7 @@ describe('decisionCollectionsSlice', () => {
             type: deleteDecisionCollectionUserWeight.type,
             payload: {
               decisionCollectionId: testDecisionCollectionId,
-              id: testUserWeightId
+              userWeightId: testUserWeightId
             }
           })
           
@@ -280,7 +280,7 @@ describe('decisionCollectionsSlice', () => {
             type: deleteDecisionCollectionUserWeight.type,
             payload: {
               decisionCollectionId: testDecisionCollectionId,
-              id: testUserWeightId
+              userWeightId: testUserWeightId
             }
           })
           
@@ -320,7 +320,7 @@ describe('decisionCollectionsSlice', () => {
           const lastTestOptionId = Object.keys(testOptionCollection).slice(-1)[0]
           const testOption = testOptionCollection[lastTestOptionId];
 
-          expect(testOption.weights).toHaveLength(Object.keys(initialUserWeights).length)
+          expect(Object.keys(testOption.weights)).toHaveLength(Object.keys(initialUserWeights).length)
         })
         it('increments option id', () => {
           const initialOptionCollection = selectOptionCollection(decisionCollectionsInitialState, testDecisionCollectionId)
@@ -355,7 +355,7 @@ describe('decisionCollectionsSlice', () => {
             payload: {
               decisionCollectionId: testDecisionCollectionId,
               name: expectedOption.name,
-              id: testOptionId
+              optionId: testOptionId
             }
           })
 
@@ -385,7 +385,39 @@ describe('decisionCollectionsSlice', () => {
             payload: {
               decisionCollectionId: testDecisionCollectionId,
               optionId: testOptionId,
-              id: testOptionWeightId,
+              optionWeightId: testOptionWeightId,
+              value: expectedWeightValue
+            }
+          })
+
+          const testOptionWeightValue = selectOptionWeight(
+            testState,
+            testDecisionCollectionId,
+            testOptionId,
+            testOptionWeightId
+          ).value
+          
+          expect(testOptionWeightValue).toEqual(expectedWeightValue)
+        })
+
+        it('update an option weight to 0 at id', () => {
+          const initialWeightValue = selectOptionWeight(
+            decisionCollectionsInitialState,
+            testDecisionCollectionId,
+            testOptionId,
+            testOptionWeightId
+          ).value
+
+          const expectedWeightValue = 0;
+
+          expect(initialWeightValue).not.toEqual(0)
+    
+          const testState = decisionCollections(decisionCollectionsInitialState, {
+            type: updateDecisionCollectionOptionWeight.type,
+            payload: {
+              decisionCollectionId: testDecisionCollectionId,
+              optionId: testOptionId,
+              optionWeightId: testOptionWeightId,
               value: expectedWeightValue
             }
           })
@@ -411,7 +443,7 @@ describe('decisionCollectionsSlice', () => {
             type: deleteDecisionCollectionOption.type,
             payload: {
               decisionCollectionId: testDecisionCollectionId,
-              id: testOptionId
+              optionId: testOptionId
             }
           })
 

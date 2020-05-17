@@ -154,7 +154,7 @@ export const decisionCollectionsSlice = createSlice({
       const userWeight = selectUserWeight(state, decisionCollectionId, userWeightId)
 
       if (value !== undefined) userWeight.value = value
-      if (name) userWeight.name = name      
+      if (name) userWeight.name = name
     },
 
     deleteDecisionCollectionUserWeight(state, action) {
