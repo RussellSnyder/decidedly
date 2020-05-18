@@ -1,4 +1,6 @@
 export const getHighestId = (collection) => {
-  if (!collection || collection.length < 1) { return 0; }
-  return parseInt(Math.max( ...collection.map(item => item.id)))
+  if (!collection) return 0;
+  const collectionIds = Object.keys(collection);
+  if(collectionIds.length < 1) { return 1; }
+  return Math.max( ...collectionIds.map(id => parseInt(id)))
 }
