@@ -4,12 +4,22 @@ import { Input } from 'reactstrap';
 
 import style from './EditableInput.module.css';
 
-function EditableInput({value, onChangeHandler, placeholder}) {
-  const [isEditing, setIsEditing] = useState(false);
+function EditableInput({
+  value,
+  onChangeHandler,
+  placeholder,
+  type="text",
+  rows=1,
+  alwaysEditing=false
+
+}) {
+  const [isEditing, setIsEditing] = useState(alwaysEditing);
 
 const text = <span
   className={style['editable-text']}
-  onClick={() => setIsEditing(true)}>
+  onClick={() => {
+    if (!alwaysEditing) setIsEditing(true)
+  }}>
     {value}
   </span>
 
@@ -20,10 +30,12 @@ const text = <span
         value: e.target.value
       })
     }}
-    onBlur={() => setIsEditing(false)}
+    onBlur={() => {
+      if (!alwaysEditing) setIsEditing(true)
+    }}
     value={value}
-    type="text"
-    name="name"
+    type={type}
+    rows={rows}
     placeholder={placeholder} />
 
 

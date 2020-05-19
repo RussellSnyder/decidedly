@@ -1,7 +1,8 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { getNextId } from '../../utils/getNextId';
 
-import style from './DecisionTemplates.module.css';
+import style from './DecisionTemplates.module.scss';
 
 import {
   createDecisionTemplate,
@@ -36,7 +37,7 @@ const TemplatePreview = ({name, description, author, date, id}) => (
     </CardBody>
     <CardFooter>
       <Button color="primary" outline className="mb-3 mb-sm-0 col-12 col-sm-5">Use</Button>
-      <Link to={`templates/${id}`} className="btn btn-outline-info col-12 col-sm-5 offset-sm-2">More</Link>
+      <Link to={`/templates/${id}`} className="btn btn-outline-info col-12 col-sm-5 offset-sm-2">More</Link>
     </CardFooter>
   </Card>
 );
@@ -49,19 +50,21 @@ function DecisionTemplates({ history }) {
     <div className="decision-templates">
       <div className="container mb-5">
         <h2 className="mb-3">Decision Templates</h2>
-        {/* <Button
+        <Button
           color="success"
           data-testid="create"
           onClick={() => {
-            dispatch(createDecisionCollection())
+            const newId = getNextId(decisionTemplates);
+            dispatch(createDecisionTemplate())
+            history.push(`/templates/${newId}/`)
           }}
         >
           Create Decision Collection 
-        </Button> */}
+        </Button>
       </div>
       <hr/>
       <Container>
-        <CardColumns>
+        <CardColumns className={style.cardColumns}>
           {Object.entries(decisionTemplates).map(([id, template]) => (
             <TemplatePreview id={id} { ...template } />
           ))}

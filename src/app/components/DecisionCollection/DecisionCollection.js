@@ -18,7 +18,7 @@ function DecisionCollection(props) {
   const { name, userWeights } = decisionCollection
 
   return (
-    <div className="decision-collection">
+    <div className="decision-collection container-fluid">
       <h2>
         <EditableInput
           value={name}

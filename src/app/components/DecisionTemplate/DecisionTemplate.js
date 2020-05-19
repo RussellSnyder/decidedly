@@ -1,22 +1,36 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom'
-import { Table } from 'reactstrap';
+import {
+  Table,
+  Button,
+  Modal,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+} from 'reactstrap';
 import { FaUser, FaRegCalendarAlt, FaInfoCircle } from 'react-icons/fa'
 import { GiWeight } from 'react-icons/gi'
-import './DecisionTemplate.module.css';
+
+import { UserWeight } from '../UserWeight/UserWeight';
 
 import {
   updateDecisionTemplate,
   selectDecisionTemplates,
   updateDecisionTemplateUserWeight,
+  deleteDecisionTemplate,
+  deleteDecisionTemplateUserWeight,
+  addDecisionTemplateUserWeight,
 } from '../DecisionTemplates/DecisionTemplatesSlice'
 
 import EditableInput from '../EditableInput/EditableInput';
 
-function DecisionTemplate(props) {
+function DecisionTemplate({ match, history }) {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [isAddingNewUserWeight, setIsAddingNewUserWeight] = useState(false);
+
   const dispatch = useDispatch();
-  const { decisionTemplateId } = props.match.params // coming from React Router.
+  const { decisionTemplateId } = match.params // coming from React Router.
   const decisionTemplates = useSelector(selectDecisionTemplates);
   const decisionTemplate = decisionTemplates[decisionTemplateId]
   const {name, description, author, date, userWeights } = decisionTemplate
@@ -63,12 +77,12 @@ function DecisionTemplate(props) {
       <img 
         className="mb-4"
         src={`https://picsum.photos/2000/250?random=${date}`}
-        alt="random image"
+        alt="random placeholder"
       />
       <div className="container">
         <div className="row mb-4">
           <div className="col-12 col-md-4">
-            <h3>About</h3>
+            <h3>Description</h3>
             <hr/>
             <p>
               <EditableInput
@@ -79,6 +93,31 @@ function DecisionTemplate(props) {
                 }))}
               />
             </p>
+            <hr/>
+            <Button color="danger"
+              onClick={() => setModalOpen(true)}
+            >
+              Delete
+            </Button>
+            <Modal isOpen={modalOpen} toggle={() => setModalOpen(false)}>
+              <ModalHeader>Are You Sure?</ModalHeader>
+              <ModalBody>
+                This masterpiece will be destroyed forever!
+              </ModalBody>
+              <ModalFooter className="justify-content-between ">
+                <Button 
+                  className="pull-left"
+                  outline color="secondary" onClick={() => setModalOpen(false)}>
+                  Cancel
+                </Button>
+                <Button color="danger" onClick={() => {
+                  dispatch(deleteDecisionTemplate({decisionTemplateId}))
+                  history.push(`/templates/`)
+                }}>
+                  Delete
+                </Button>
+              </ModalFooter>
+            </Modal>
           </div>
           <div className="col-12 col-md-8">
             <h3>Weights <GiWeight /></h3>
@@ -123,10 +162,38 @@ function DecisionTemplate(props) {
                         }))}
                       />
                     </td>
+                    <td>
+                      <Button size="sm" color="danger"
+                        onClick={() => {
+                          dispatch(deleteDecisionTemplateUserWeight({
+                            decisionTemplateId,
+                            userWeightId,  
+                          }))
+                        }}>
+                        X
+                      </Button>
+                    </td>
                   </tr>
                 ))}
+                {!isAddingNewUserWeight && <tr>
+                  <td colSpan="4">
+                    <Button size="sm" color="success"
+                      onClick={() => {
+                        setIsAddingNewUserWeight(true)
+                      }}>
+                      + Add Another
+                    </Button>
+                  </td>
+                </tr>}
               </tbody>
             </Table>
+            {isAddingNewUserWeight && <UserWeight type="add" handleSubmit={(values) => {
+              dispatch(addDecisionTemplateUserWeight({
+                decisionTemplateId,
+                ...values,
+              }))
+              setIsAddingNewUserWeight(false)
+            }} />}
           </div>
         </div>
       </div>

@@ -32,7 +32,7 @@ function Option(props) {
   const optionWeights = selectOptionWeights(decisionCollections, decisionCollectionId, optionId);
 
   return (
-    <div className="option container">
+    <div className="option container-fluid">
       <div className="row mb-4">
         <div className="col-sm-8">
           <h2>
@@ -67,23 +67,33 @@ function Option(props) {
       </div>
       
       <div className="weights">
-        {Object.entries(optionWeights).map(([optionWeightId, optionWeight]) => {
-          return <ImportanceSlider
-            id={optionWeightId}
-            key={`option-${optionWeightId}`}
-            value={optionWeight.value}
-            min={OPTION_VALUE_MIN}
-            max={OPTION_VALUE_MAX}
-            name={userWeights[optionWeightId].name}
-            handleValueChange={(value) => {
-              dispatch(updateDecisionCollectionOptionWeight({
-                decisionCollectionId,
-                optionId,
-                optionWeightId,
-                value,
-              }))
-            }}
-          />
+        {Object.entries(optionWeights).map(([optionWeightId, {value}]) => {
+          const { name, description } = userWeights[optionWeightId]
+          return (
+            <div class="row weight mb-5">
+              <div class="col-md-3">
+                <h5>{name}</h5>
+                <p>{description}</p>
+              </div>
+              <div class="col-md-9">
+                <ImportanceSlider
+                  id={optionWeightId}
+                  key={`option-${optionWeightId}`}
+                  value={value}
+                  min={OPTION_VALUE_MIN}
+                  max={OPTION_VALUE_MAX}
+                  handleValueChange={(value) => {
+                    dispatch(updateDecisionCollectionOptionWeight({
+                      decisionCollectionId,
+                      optionId,
+                      optionWeightId,
+                      value,
+                    }))
+                  }}
+                />                
+              </div>
+            </div>
+          )
         })}
       </div>
     </div>

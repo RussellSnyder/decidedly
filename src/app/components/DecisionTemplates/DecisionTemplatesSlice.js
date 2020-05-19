@@ -135,7 +135,7 @@ export const decisionTemplatesSlice = createSlice({
     createDecisionTemplate(state) {
       const id = getNextId(state);
       const newTemplate = {
-        ...decisionTemplatesInitialState[1],
+        ...decisionTemplateInitialState,
         name: `Decision Template ${id}`,
       }
 

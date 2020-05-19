@@ -35,12 +35,12 @@ const Header = (props) => {
             <Nav className="mr-auto" navbar>
               <NavItem>
                 <Link to="/collections" activeClassName='active' className="nav-link">
-                  My Decision Collections
+                  My Decisions
                 </Link>
               </NavItem>
               <NavItem>
                 <Link to="/templates" activeClassName='active' className="nav-link">
-                  Decision Templates
+                  Templates
                 </Link>
               </NavItem>
             </Nav>
