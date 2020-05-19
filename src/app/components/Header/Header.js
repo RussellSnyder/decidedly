@@ -12,15 +12,29 @@ import {
 import { FaGithub } from 'react-icons/fa';
 
 import { NavLink as Link } from 'react-router-dom'
+import { useEffect } from 'react';
 
-const Header = (props) => {
+let lastLocation;
+
+const Header = ({history}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggle = () => setIsOpen(!isOpen);
 
+  useEffect(() => {
+    if (lastLocation !== history.location) {
+      setIsOpen(false)
+    }
+
+    lastLocation = history.location;
+  }, [history.location])
+
   return (
     <header>
-      <Link to="/" className="d-none d-md-block nav-link">
+      <Link
+        to="/"
+        className="d-none d-md-block nav-link"
+      >
         <h1 className="text-center">Decidedly</h1>
       </Link>
       <Navbar color="light" light expand="md">
@@ -32,12 +46,20 @@ const Header = (props) => {
           <Collapse isOpen={isOpen} navbar>
             <Nav className="mr-auto" navbar>
               <NavItem>
-                <Link to="/collections" activeClassName='active' className="nav-link">
+                <Link
+                  to="/collections"
+                  activeClassName='active'
+                  className="nav-link"
+                >
                   My Decisions
                 </Link>
               </NavItem>
               <NavItem>
-                <Link to="/templates" activeClassName='active' className="nav-link">
+                <Link
+                  to="/templates"
+                  activeClassName='active'
+                  className="nav-link"
+                >
                   Templates
                 </Link>
               </NavItem>

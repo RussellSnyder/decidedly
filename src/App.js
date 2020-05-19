@@ -22,7 +22,7 @@ function App() {
     <div className="App">
       <div className="py-4">
         <Router>
-          <Header />
+          <Route component={Header} />
           <hr/>
           <Route exact path="/" component={Home} />
           <Route exact path="/collections" component={DecisionCollections} />
