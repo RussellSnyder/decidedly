@@ -3,10 +3,8 @@ import {
   Collapse,
   Navbar,
   NavbarToggler,
-  NavbarBrand,
   Nav,
   NavItem,
-  NavLink,
   NavbarText,
   Container
 } from 'reactstrap';
@@ -50,7 +48,7 @@ const Header = (props) => {
                 rel="noopener noreferrer"
               >
                 <FaGithub size="24" className="mr-2" />
-                Beta v0.0.2
+                Beta v0.0.3
               </a>
             </NavbarText>
           </Collapse>

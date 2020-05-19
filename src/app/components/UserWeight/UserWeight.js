@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Form, FormGroup, Label, Input } from 'reactstrap';
+import { Button, Form, FormGroup, Label } from 'reactstrap';
 import { USER_WEIGHT_VALUE_MAX, USER_WEIGHT_VALUE_MIN } from '../UserWeights/UserWeights';
 import ImportanceSlider from '../ImportanceSlider/ImportanceSlider'
 import EditableInput from '../EditableInput/EditableInput'

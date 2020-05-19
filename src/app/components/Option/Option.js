@@ -70,12 +70,12 @@ function Option(props) {
         {Object.entries(optionWeights).map(([optionWeightId, {value}]) => {
           const { name, description } = userWeights[optionWeightId]
           return (
-            <div class="row weight mb-5">
-              <div class="col-md-3">
+            <div className="row weight mb-5">
+              <div className="col-md-3">
                 <h5>{name}</h5>
                 <p>{description}</p>
               </div>
-              <div class="col-md-9">
+              <div className="col-md-9">
                 <ImportanceSlider
                   id={optionWeightId}
                   key={`option-${optionWeightId}`}

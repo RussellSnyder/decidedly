@@ -6,25 +6,21 @@ import style from './DecisionTemplates.module.scss';
 
 import {
   createDecisionTemplate,
-  deleteDecisionTemplate,
-  updateDecisionTemplateName,
-  addDecisionTemplateUserWeight,
-  updateDecisionTemplateUserWeight,
-  deleteDecisionTemplateUserWeight,
   selectDecisionTemplates,
-  selectDecisionTemplate,
-  selectUserWeights,
-  selectUserWeight,
-  decisionTemplatesInitialState,
 } from './DecisionTemplatesSlice';
 
 import {
-  Card, CardImg, CardText, CardBody, CardFooter, CardDeck, CardColumns,
-  CardTitle, CardSubtitle, Button, Container, Row, Col
+  createDecisionCollectionFromDecisionTemplate,
+  selectDecisionCollections,
+} from '../DecisionCollections/DecisionCollectionsSlice';
+
+import {
+  Card, CardImg, CardText, CardBody, CardFooter, CardColumns,
+  CardTitle, CardSubtitle, Button, Container
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
 
-const TemplatePreview = ({name, description, author, date, id}) => (
+const TemplatePreview = ({name, description, author, date, id, handleUseClick}) => (
   <Card
     // className="col-12 col-sm-6 col-md-4 mb-5"
     key={`template-preview-${id}`}
@@ -36,7 +32,11 @@ const TemplatePreview = ({name, description, author, date, id}) => (
       <CardText>{description}</CardText>
     </CardBody>
     <CardFooter>
-      <Button color="primary" outline className="mb-3 mb-sm-0 col-12 col-sm-5">Use</Button>
+      <Button color="primary" outline className="mb-3 mb-sm-0 col-12 col-sm-5"
+        onClick={() => handleUseClick()}
+      >
+        Use
+      </Button>
       <Link to={`/templates/${id}`} className="btn btn-outline-info col-12 col-sm-5 offset-sm-2">More</Link>
     </CardFooter>
   </Card>
@@ -45,6 +45,7 @@ const TemplatePreview = ({name, description, author, date, id}) => (
 function DecisionTemplates({ history }) {
   const dispatch = useDispatch();
   const decisionTemplates = useSelector(selectDecisionTemplates);
+  const decisionCollections = useSelector(selectDecisionCollections);
 
   return (
     <div className="decision-templates">
@@ -65,8 +66,20 @@ function DecisionTemplates({ history }) {
       <hr/>
       <Container>
         <CardColumns className={style.cardColumns}>
-          {Object.entries(decisionTemplates).map(([id, template]) => (
-            <TemplatePreview id={id} { ...template } />
+          {Object.entries(decisionTemplates).map(([id, decisionTemplate]) => (
+            <TemplatePreview
+              key={id}
+              id={id}
+              { ...decisionTemplate }
+              handleUseClick={() => {
+                const newId = getNextId(decisionCollections);
+                console.log(decisionTemplate)
+                dispatch(createDecisionCollectionFromDecisionTemplate({
+                  decisionTemplate
+                }))
+                history.push(`/collections/${newId}/weights`)
+              }}
+            />
           ))}
         </CardColumns>
       </Container>

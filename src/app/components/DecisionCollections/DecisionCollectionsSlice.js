@@ -81,8 +81,8 @@ export const decisionCollectionsInitialState = {
 export const decisionCollectionInitialState = {
   id: 1,
   name: "New Decision Collection",
-  userWeights: [],
-  optionCollection: [],
+  userWeights: {},
+  optionCollection: {},
 }
 
 export const decisionCollectionsSlice = createSlice({
@@ -94,6 +94,20 @@ export const decisionCollectionsSlice = createSlice({
       const newDC = {
         ...decisionCollectionsInitialState[1],
         name: `Decision Collection ${id}`,
+      }
+
+      state[id] = newDC
+    },
+
+    createDecisionCollectionFromDecisionTemplate(state, action) {
+      const id = getNextId(state);
+      let { decisionTemplate } = action.payload
+      const { name, userWeights } = decisionTemplate;
+
+      const newDC = {
+        name: `Decision Collection ${id} from ${name}`,
+        userWeights,
+        optionCollection: {}
       }
 
       state[id] = newDC
@@ -226,6 +240,7 @@ export const decisionCollectionsSlice = createSlice({
 
 export const {
   createDecisionCollection,
+  createDecisionCollectionFromDecisionTemplate,
   deleteDecisionCollection,
   updateDecisionCollectionName,
   cloneDecisionCollection,

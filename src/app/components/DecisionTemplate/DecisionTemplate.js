@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom'
 import {
   Table,
   Button,
@@ -9,7 +8,7 @@ import {
   ModalFooter,
   ModalBody,
 } from 'reactstrap';
-import { FaUser, FaRegCalendarAlt, FaInfoCircle } from 'react-icons/fa'
+import { FaUser, FaRegCalendarAlt } from 'react-icons/fa'
 import { GiWeight } from 'react-icons/gi'
 
 import { UserWeight } from '../UserWeight/UserWeight';

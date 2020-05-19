@@ -34,7 +34,7 @@ function DecisionCollections({ history }) {
       <hr/>
       <div className="container">
         {Object.keys(decisionCollections).length < 1 && <div className="row text-center">
-          <div class="col-12">
+          <div className="col-12">
             <h2>Want to decide something?</h2>
             <h4>Create a decision collection!</h4>  
             <Button
@@ -89,7 +89,7 @@ function DecisionCollections({ history }) {
               </div>
             </div>
             {/* <div className="col-md-4">
-              <ul class="list-unstyled">
+              <ul className="list-unstyled">
                 {factors.slice(0, 4).map((weight) => <li>{weight.name}</li>)}
               </ul>
             </div> */}
