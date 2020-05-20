@@ -1,22 +1,48 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+
 import {
   Collapse,
   Navbar,
   NavbarToggler,
   Nav,
   NavItem,
+  NavLink,
   NavbarText,
   Container
 } from 'reactstrap';
 
-import { FaGithub } from 'react-icons/fa';
+import {
+  setLoginFormOpen,
+} from '../UI/UISlice'
+
+import {
+  selectCurrentUser,
+  logOutUser,
+} from '../CurrentUser/CurrentUserSlice'
 
 import { NavLink as Link } from 'react-router-dom'
 import { useEffect } from 'react';
 
+const showLogoutSuccessMessage = () => (
+  toast.info('Logout Successful', {
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+  })
+)
+
+
 let lastLocation;
 
 const Header = ({history}) => {
+  const dispatch = useDispatch();
+  const currentUser = useSelector(selectCurrentUser);
+
+  const { isSignedIn } = currentUser;
   const [isOpen, setIsOpen] = useState(false);
 
   const toggle = () => setIsOpen(!isOpen);
@@ -45,7 +71,7 @@ const Header = ({history}) => {
           <NavbarToggler onClick={toggle} />
           <Collapse isOpen={isOpen} navbar>
             <Nav className="mr-auto" navbar>
-              <NavItem>
+            {isSignedIn && <NavItem>
                 <Link
                   to="/collections"
                   activeClassName='active'
@@ -53,7 +79,7 @@ const Header = ({history}) => {
                 >
                   My Decisions
                 </Link>
-              </NavItem>
+              </NavItem>}
               <NavItem>
                 <Link
                   to="/templates"
@@ -64,15 +90,25 @@ const Header = ({history}) => {
                 </Link>
               </NavItem>
             </Nav>
-            <NavbarText>
-              <a href="https://github.com/RussellSnyder/decidedly"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <FaGithub size="24" className="mr-2" />
-                Beta v0.0.3
-              </a>
-            </NavbarText>
+            <Nav className="ml-auto" navbar>
+              <NavItem>
+                {!isSignedIn && <NavLink
+                  onClick={() => {
+                    dispatch(setLoginFormOpen({open: true}))
+                  }}
+                >
+                  Login
+                </NavLink>}
+                {isSignedIn && <NavLink
+                  onClick={() => {
+                    dispatch(logOutUser())
+                    showLogoutSuccessMessage()
+                  }}
+                >
+                  Logout
+                </NavLink>}
+              </NavItem>
+            </Nav>
           </Collapse>
         </Container>
       </Navbar>

@@ -9,17 +9,19 @@ import DecisionTemplate from './app/components/DecisionTemplate/DecisionTemplate
 
 
 import Home from './app/pages/Home'
-
+import ToastContainer from './app/components/ToastContainer/ToastContainer'
 
 
 import Option from './app/components/Option/Option'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import Header from './app/components/Header/Header'
 import Footer from './app/components/Footer/Footer'
+import SignUpLogin from './app/components/SignUpLogin/SignUpLogin'
 
 function App() {
   return (
     <div className="App">
+      <ToastContainer />
       <div className="py-4">
         <Router>
           <Route component={Header} />
@@ -33,6 +35,7 @@ function App() {
           <Route exact path="/templates" component={DecisionTemplates} />
           <Route exact path="/templates/:decisionTemplateId" component={DecisionTemplate} />
         </Router>
+        <SignUpLogin />
         <Footer />
       </div>  
     </div>
