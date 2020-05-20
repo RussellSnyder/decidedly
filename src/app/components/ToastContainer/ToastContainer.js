@@ -12,9 +12,7 @@ export default () => {
       newestOnTop={false}
       closeOnClick
       rtl={false}
-      pauseOnFocusLoss
       draggable
-      pauseOnHover
     />
   )
 }

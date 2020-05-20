@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+import axios from "axios";
 
 import {
   Collapse,
@@ -101,8 +102,15 @@ const Header = ({history}) => {
                 </NavLink>}
                 {isSignedIn && <NavLink
                   onClick={() => {
-                    dispatch(logOutUser())
-                    showLogoutSuccessMessage()
+                    axios.get("/logout")
+                    .then(res => {
+                      dispatch(logOutUser())
+                      showLogoutSuccessMessage()
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        console.log(err.response);
+                    });              
                   }}
                 >
                   Logout

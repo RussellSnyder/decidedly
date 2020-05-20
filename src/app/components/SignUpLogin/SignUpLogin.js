@@ -27,7 +27,7 @@ import {
 } from '../CurrentUser/CurrentUserSlice'
 
 const showLoginSuccessMessage = () => (
-  toast('Login Succesful', {
+  toast.info('Login Succesful', {
     autoClose: 5000,
     hideProgressBar: false,
     closeOnClick: true,
