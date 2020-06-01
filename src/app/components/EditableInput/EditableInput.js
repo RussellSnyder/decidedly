@@ -13,6 +13,7 @@ function EditableInput({
   alwaysEditing=false
 
 }) {
+
   const [isEditing, setIsEditing] = useState(alwaysEditing);
 
 const text = <span

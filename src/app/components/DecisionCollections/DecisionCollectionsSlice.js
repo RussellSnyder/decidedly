@@ -87,7 +87,7 @@ export const decisionCollectionInitialState = {
 
 export const decisionCollectionsSlice = createSlice({
   name: 'decisionCollections',
-  initialState: decisionCollectionsInitialState,
+  initialState: {},
   reducers: {
     createDecisionCollection(state) {
       const id = getNextId(state);
@@ -174,7 +174,7 @@ export const decisionCollectionsSlice = createSlice({
       const userWeight = selectUserWeight(state, decisionCollectionId, userWeightId)
 
       if (value !== undefined) userWeight.value = value
-      if (name) userWeight.name = name
+      if (name !== undefined) userWeight.name = name
     },
 
     deleteDecisionCollectionUserWeight(state, action) {

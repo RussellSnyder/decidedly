@@ -21,9 +21,19 @@ export default () => {
         <Container>
           <h1 className="display-3">It's Your Choice</h1>
           <p>Make the best decision for tomorrow based on what is important to you today!</p>
-          <Button color="primary" size="lg" onClick={() => dispatch(setLoginFormOpen({open: true}))}>
+          {/* <Button
+            color="primary"
+            size="lg"
+            onClick={() => dispatch(setLoginFormOpen({open: true}))}
+          >
             Let's Get Started
-          </Button>
+          </Button> */}
+          <NavLink
+            className="btn btn-lg btn-primary"
+            to={"/collections"}
+          >
+            Let's Get Started
+          </NavLink>
         </Container>
       </Jumbotron>
     </main>

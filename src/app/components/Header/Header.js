@@ -85,13 +85,13 @@ const Header = ({history}) => {
                 <Link
                   to="/templates"
                   activeClassName='active'
-                  className="nav-link"
+                  className="nav-link disabled"
                 >
-                  Templates
+                  (coming soon!) Marketplace
                 </Link>
               </NavItem>
             </Nav>
-            <Nav className="ml-auto" navbar>
+            {/* <Nav className="ml-auto" navbar>
               <NavItem>
                 {!isSignedIn && <NavLink
                   onClick={() => {
@@ -103,20 +103,20 @@ const Header = ({history}) => {
                 {isSignedIn && <NavLink
                   onClick={() => {
                     axios.get("/logout")
-                    .then(res => {
-                      dispatch(logOutUser())
-                      showLogoutSuccessMessage()
-                    })
-                    .catch(err => {
-                        console.log(err);
-                        console.log(err.response);
-                    });              
+                      .then(res => {
+                        dispatch(logOutUser())
+                        showLogoutSuccessMessage()
+                      })
+                      .catch(err => {
+                          console.log(err);
+                          console.log(err.response);
+                      });              
                   }}
                 >
                   Logout
                 </NavLink>}
               </NavItem>
-            </Nav>
+            </Nav> */}
           </Collapse>
         </Container>
       </Navbar>

@@ -44,13 +44,13 @@ function UserWeights(props) {
                 name
               }))
             }
-            handleValueChange={(value) => 
+            handleValueChange={(value) => {
               dispatch(updateDecisionCollectionUserWeight({
                 decisionCollectionId,
                 userWeightId,
                 value
               }))
-            }
+            }}
             handleDelete={() => 
               dispatch(deleteDecisionCollectionUserWeight({
                 decisionCollectionId,
