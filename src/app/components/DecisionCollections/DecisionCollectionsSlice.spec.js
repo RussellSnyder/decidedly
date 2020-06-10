@@ -104,7 +104,7 @@ describe('decisionCollectionsSlice', () => {
 
   describe('reducer', () => {
     it('handles initial state', () => {
-      expect(decisionCollections(undefined, {})).toEqual(decisionCollectionsInitialState)
+      expect(decisionCollections(undefined, {})).toEqual({})
     })
     describe('Decision Collection CRUD', () => {
       let testState;
@@ -115,8 +115,7 @@ describe('decisionCollectionsSlice', () => {
       })
       describe("createDecisionCollection", () => {
         it('creates a decision collection | empty state', () => {  
-          expect(Object.keys(testState)).toHaveLength(initialStateSize + 1)
-          expect(testState[3]).toBeDefined()
+          expect(Object.keys(testState)).toHaveLength(1)
         })
 
         it('generates incrementing DecisionCollection IDs', () => {  
@@ -124,9 +123,8 @@ describe('decisionCollectionsSlice', () => {
             type: createDecisionCollection.type
           })
     
-          expect(Object.keys(testState2)).toHaveLength(Object.keys(testState).length + 1)
-          expect(Object.keys(testState2)).toHaveLength(initialStateSize + 2)
-          expect(testState2[4]).toBeDefined()  
+          expect(Object.keys(testState2)).toHaveLength(2)
+          expect(testState2[2]).toBeDefined()  
         })
     
         it('creates a decision collection | non-empty state', () => {
